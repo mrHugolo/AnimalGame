@@ -1,14 +1,17 @@
 package com.company;
 
+import java.util.*;
+
 public abstract class Animal {
+    Scanner scan = new Scanner(System.in);
 
     private String name;
     //0 = male, 1 = female
     private int gender;
     private int health;
-    private final double MAX_AGE = 30;
+    private double MAX_AGE = 30;
     private int age;
-    private final double MAX_PRICE = 50000;
+    private double MAX_PRICE = 50000;
     private double price;
     private Player owner;
     private boolean isAlive = true;
@@ -18,6 +21,18 @@ public abstract class Animal {
         this.gender = gender;
         health = 100;
         age = 0;
+    }
+
+    public void mate(Animal animal){
+        int tryToMakeABaby = !this.getClass().getSimpleName().equals(animal.getClass().getSimpleName())
+                ? 0 : this.gender == animal.getGender() ? 0 : (int) (Math.random() * 2);
+        if(tryToMakeABaby == 1){
+            int genderReveal = (int) (Math.random() * 2);
+            System.out.println("Congratulation! It's a " + (genderReveal == 0 ? "male" : "female")
+                    + ". What would you like to name your " + this.getClass().getSimpleName().toLowerCase() + "?");
+            owner.getAnimals().add(Store.createAnimal(this.getClass().getSimpleName(), scan.nextLine(), genderReveal));
+        }
+        else System.out.println("No baby for you!");
     }
 
     public void die(){
@@ -31,6 +46,14 @@ public abstract class Animal {
 
         this.owner = owner;
         owner.buyAnimal(this);
+    }
+
+    public void changeMaxAge(int maxAge){
+        MAX_AGE = maxAge;
+    }
+
+    public void changeMaxPrice(int maxPrice){
+        MAX_PRICE = maxPrice;
     }
 
     public String getName() {
@@ -59,6 +82,10 @@ public abstract class Animal {
         price = age <= MAX_AGE / 3 ? MAX_PRICE * ((3 * age) / (5 * MAX_AGE) + 0.8)
                 : MAX_PRICE * (1.5 - (3 * age) / (2 * MAX_AGE));
         return (int) price;
+    }
+
+    public Player getOwner(){
+        return owner;
     }
 
 }

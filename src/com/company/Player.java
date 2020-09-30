@@ -11,8 +11,9 @@ public class Player {
     public Player(String name){
         this.name = name;
         money = 50000;
+        animals = new ArrayList<Animal>();
     }
-    //***Right now there are no way to tell a customer if they doesn't have enough money***
+
     public void buyAnimal(Animal animal){
         if(animals.contains(animal)){
             return;
@@ -45,6 +46,10 @@ public class Player {
 
     public int getMoney(){
         return money;
+    }
+
+    public ArrayList<Animal> getAnimals(){
+        return animals;
     }
 
 
