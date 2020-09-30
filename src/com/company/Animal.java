@@ -10,12 +10,27 @@ public abstract class Animal {
     private int age;
     private final double MAX_PRICE = 50000;
     private double price;
+    private Player owner;
+    private boolean isAlive = true;
 
     public Animal(String name, int gender) {
         this.name = name;
         this.gender = gender;
         health = 100;
         age = 0;
+    }
+
+    public void die(){
+        isAlive = false;
+    }
+
+    public void beBought(Player owner){
+        if(this.owner == owner){
+            return;
+        }
+
+        this.owner = owner;
+        owner.buyAnimal(this);
     }
 
     public String getName() {
