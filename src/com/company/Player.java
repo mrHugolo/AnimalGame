@@ -5,12 +5,14 @@ import java.util.*;
 public class Player {
     Scanner scan = new Scanner(System.in);
 
+    protected static ArrayList<Player> players = new ArrayList<>();
     protected String name;
     protected int money;
     protected ArrayList<Animal> animals;
     protected LinkedHashMap<String, Integer> foods;
 
     public Player(String name){
+        players.add(this);
         this.name = name;
         money = 50000;
         animals = new ArrayList<Animal>();
@@ -46,7 +48,7 @@ public class Player {
 
     public void feedAnimal(Animal animal, int foodInFoodList, int kg){
         if(animal.foodsICanEat.contains(foodInFoodList)) {
-            //increase as much money as Player loose in buyFood()
+            //increase as much money as Player lose in buyFood()
             increaseMoney(Store.foodList[foodInFoodList].price * kg);
             buyFood(foodInFoodList, kg * -1);
             animal.health = Math.min(100, animal.health + 10 * kg);
