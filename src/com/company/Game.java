@@ -11,6 +11,9 @@ public class Game {
     public Game(){
         rules();
         decideRoundsAndPlayers();
+        for(Player player : Player.players)
+        System.out.println(player.name);
+
 
     }
 
@@ -31,6 +34,8 @@ public class Game {
                     " Sell at the optimal time!\n" +
                 "Their hp will also effect the price. An animal with 80 hp is only worth 80 % of the price " +
                     "and an animal with 0 hp is dead and can never be sold or make babies.\n" +
+                "There is a chance that animals get sick, if you don't pay the veterinarian bill the animal will die " +
+                    "but even if you do pay, there is still a chance that they'll die.\n" +
                 "When a player neither have animals nor coins, they are eliminated from the game " +
                     "otherwise the game is over after the agreed number of rounds have been played.\n" +
                 "At that time all remaining animals will be sold and the player with the most coins win!");
@@ -41,7 +46,8 @@ public class Game {
     public void decideRoundsAndPlayers(){
         System.out.println("How many rounds will you be playing? (Write a number between 5-30 and press ENTER)");
         try{
-            int temp = scan.nextInt();
+            Scanner scanRounds = new Scanner(System.in);
+            int temp = scanRounds.nextInt();
             rounds = Math.max(5, temp);
             rounds = Math.min(30, rounds);
             System.out.println("You will play " + rounds + " rounds!");
@@ -52,7 +58,8 @@ public class Game {
 
         System.out.println("How many players will be playing? (Write a number between 1-4 and press ENTER)");
         try{
-            int temp = scan.nextInt();
+            Scanner scanPlayers = new Scanner(System.in);
+            int temp = scanPlayers.nextInt();
             players = Math.max(1, temp);
             players = Math.min(4, players);
             System.out.println("There will be " + players + " players playing!");
@@ -60,10 +67,11 @@ public class Game {
         catch (Exception e){
             System.out.println("I don't even know what that could mean... I guess you'll have to play alone!");
         }
-        //for-loop won't let you write name for last player so add 1 to players
-        for(int i = 1; i <= players + 1; i++){
-            new Player(scan.nextLine());
+
+        for(int i = 1; i <= players; i++){
             System.out.println("Player " + i + ", please enter your name.");
+            new Player(scan.nextLine());
+
         }
         cleanSlate(27);
     }
