@@ -29,10 +29,10 @@ public class Player {
     public void buyAnimal(Animal animal, Player ... players){
         if(players.length != 0) {
             players[0].animals.remove(animal);
-            players[0].increaseMoney(animal.getPrice());
+            players[0].increaseMoney(animal.calculatePrice());
         }
         this.animals.add(animal);
-        increaseMoney(animal.getPrice() * -1);
+        increaseMoney(animal.calculatePrice() * -1);
     }
 
     //players will only be 0 or 1
@@ -42,17 +42,22 @@ public class Player {
         }
         else {
             animals.remove(animal);
-            this.increaseMoney(animal.getPrice());
+            this.increaseMoney(animal.calculatePrice());
         }
     }
 
     public void feedAnimal(Animal animal, int foodInFoodList, int kg){
         if(animal.foodsICanEat.contains(foodInFoodList)) {
+            kg = Math.min(kg, foods.get(Store.foodList[foodInFoodList].getClass().getSimpleName()));
             //increase as much money as Player lose in buyFood()
             increaseMoney(Store.foodList[foodInFoodList].price * kg);
             buyFood(foodInFoodList, kg * -1);
             animal.health = Math.min(100, animal.health + 10 * kg);
+            return;
         }
+        System.out.println(animal.name + " can't eat " +
+                Store.foodList[foodInFoodList].getClass().getSimpleName().toLowerCase() +
+        "! That was a waste of a turn...");
     }
 
     public void mateTwoAnimals(Animal animal1, Animal animal2) {
@@ -100,7 +105,7 @@ public class Player {
 
     public ArrayList<String> getAnimalNames(){
         ArrayList<String> animalNames = new ArrayList<>();
-        for(Animal animal : animals) animalNames.add(animal.getName());
+        for(Animal animal : animals) animalNames.add(animal.name);
         return animalNames;
     }
 
