@@ -5,16 +5,19 @@ import java.util.*;
 public class Game {
     Scanner scan = new Scanner(System.in);
 
+    private int round = 1;
     private int rounds = 10;
     private int players = 1;
 
     public Game(){
+        Store s = new Store();
+
         rules();
         decideRoundsAndPlayers();
-        for(Player player : Player.players)
-        System.out.println(player.name);
-
-
+        seeInfo();
+        while(round < rounds) {
+            round++;
+        }
     }
 
     public void rules(){
@@ -76,8 +79,48 @@ public class Game {
         cleanSlate(27);
     }
 
+    public void seeAnimalList(Player player){
+        for(Animal animal : player.animals){
+            System.out.println(animal.name + " the " + animal.getClass().getSimpleName().toLowerCase() + ":" +
+                    "   Age: " + animal.age + "/" + animal.MAX_AGE + "     HP: " + animal.health + "/100" +
+                    "   Price: " + animal.calculatePrice() + "/" + animal.MAX_PRICE +
+                    "   Eats: " + animal.showFoodsICanEat());
+        }
+    }
+
+    public void seeFoodList(Player player){
+        for(Food food : Store.foodList){
+            System.out.printf("%s %d%s  ",food.getClass().getSimpleName() + ":",
+                    player.foods.get(food.getClass().getSimpleName()), "kg");
+        }
+    }
+
+    public void seeInfo(){
+        String players = "";
+        for(Player player : Player.players){
+            players += player.name + " ";
+        }
+        System.out.println("Rounds played: " + round + "/" + rounds + "     Players left: " + players +
+                "\n\nAnimals:        MaxAge:         MaxPrice:       Eats:");
+        for(Animal animal : Store.animalList){
+            System.out.println(animal.getClass().getSimpleName() + " ".repeat(16 - charactersInWord(animal.getClass().getSimpleName(),0)) +
+                    animal.MAX_AGE + " ".repeat(16 - charactersInWord("", animal.MAX_AGE)) +
+                    animal.MAX_PRICE + " ".repeat(16 - charactersInWord("", animal.MAX_PRICE)) +
+                    animal.showFoodsICanEat());
+        }
+
+
+    }
+
     public void cleanSlate(int invisibleAt27){
         System.out.println("\n".repeat(invisibleAt27));
+    }
+
+    public int charactersInWord(String word, int number){
+        if(!word.equals("")) {
+            return word.split("").length;
+        }
+        return String.valueOf(number).split("").length;
     }
 
 }
