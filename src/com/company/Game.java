@@ -14,10 +14,14 @@ public class Game {
 
         rules();
         decideRoundsAndPlayers();
-        seeInfo();
-        while(round < rounds) {
+        //seeInfo();
+        while(round < rounds || Player.players.size() == 0) {
+            for(Player player : Player.players) {
+                chooseWhatToDo(player);
+            }
             round++;
         }
+        System.out.println("GAME OVER Hugo won :)");
     }
 
     public void rules(){
@@ -79,6 +83,31 @@ public class Game {
         cleanSlate(27);
     }
 
+    public void chooseWhatToDo(Player player){
+        int chars = charactersInWord(player.name, 0);
+        cleanSlate(27);
+        System.out.println("It's " + player.name + "'s turn. Enter the number/letter next to the action you want to do!\n\n" +
+                "1. Buy animals" + " ".repeat(40 + chars) + "a. Show AnimalList\n" +
+                "2. Buy food" + " ".repeat(43 + chars) + "f. Show FoodList");
+
+        System.out.println(player.animals.size() == 0 ? " ".repeat(54 + chars) + "i. Show Info" :
+                "3. Feed animals" + " ".repeat(39 + chars) + "i. Show Info\n" +
+                        "4. Sell animals\n5. Pick two animals to mate");
+        String choice = scan.next();
+        if(player.animals.size() == 0 && choice.matches("[3-5]")) {choice = "default";}
+        switch(choice){
+            case "1" -> System.out.println("Buy animal");
+            case "2" -> System.out.println("Buy food");
+            case "3" -> System.out.println("Feed animal");
+            case "4" -> System.out.println("Sell animal");
+            case "5" -> System.out.println("Mate...");
+            case "a" -> seeAnimalList(player);
+            case "f" -> seeFoodList(player);
+            case "i" -> seeInfo();
+            default -> System.out.println("Default");
+        }
+    }
+
     public void seeAnimalList(Player player){
         for(Animal animal : player.animals){
             System.out.println(animal.name + " the " + animal.getClass().getSimpleName().toLowerCase() + ":" +
@@ -86,6 +115,9 @@ public class Game {
                     "   Price: " + animal.calculatePrice() + "/" + animal.MAX_PRICE +
                     "   Eats: " + animal.showFoodsICanEat());
         }
+        if(player.animals.size() == 0) System.out.println("You don't have any animals!");
+        System.out.println("\nPress c followed by ENTER to continue!");
+        scan.next();
     }
 
     public void seeFoodList(Player player){
@@ -93,6 +125,8 @@ public class Game {
             System.out.printf("%s %d%s  ",food.getClass().getSimpleName() + ":",
                     player.foods.get(food.getClass().getSimpleName()), "kg");
         }
+        System.out.println("\n\nPress c followed by ENTER to continue!");
+        scan.next();
     }
 
     public void seeInfo(){
@@ -103,13 +137,14 @@ public class Game {
         System.out.println("Rounds played: " + round + "/" + rounds + "     Players left: " + players +
                 "\n\nAnimals:        MaxAge:         MaxPrice:       Eats:");
         for(Animal animal : Store.animalList){
-            System.out.println(animal.getClass().getSimpleName() + " ".repeat(16 - charactersInWord(animal.getClass().getSimpleName(),0)) +
-                    animal.MAX_AGE + " ".repeat(16 - charactersInWord("", animal.MAX_AGE)) +
-                    animal.MAX_PRICE + " ".repeat(16 - charactersInWord("", animal.MAX_PRICE)) +
+            System.out.println(animal.getClass().getSimpleName() + " ".repeat(16 - charactersInWord(
+                    animal.getClass().getSimpleName(),0)) +
+              (int) animal.MAX_AGE + " ".repeat(16 - charactersInWord("", (int) animal.MAX_AGE)) +
+              (int) animal.MAX_PRICE + " ".repeat(16 - charactersInWord("", (int) animal.MAX_PRICE)) +
                     animal.showFoodsICanEat());
         }
-
-
+        System.out.println("\nPress c followed by ENTER to continue!");
+        scan.next();
     }
 
     public void cleanSlate(int invisibleAt27){
