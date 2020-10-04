@@ -21,7 +21,18 @@ public class Game {
         Player.players.get(0).buyAnimal(Store.createAnimal("Bear", "Brumme_Lisa", 1));
         while (round < rounds || Player.players.size() == 0) {
             for (Player player : Player.players) {
+                readOutVeterinarianBills(player);
                 chooseWhatToDo(player, "");
+            }
+
+
+            for(Player player : Player.players){
+                for(Animal animal : player.animals){
+                    animal.age++;
+                    if(animal.loseHp) animal.loseHealth();
+                    animal.loseHp = true;
+                    if(animal.isSick()) player.getVeterinarianBill(animal);
+                }
             }
             round++;
         }
@@ -61,28 +72,50 @@ public class Game {
             int temp = scanRounds.nextInt();
             rounds = Math.max(5, temp);
             rounds = Math.min(30, rounds);
+            cleanSlate(30);
             System.out.println("You will play " + rounds + " rounds!");
         } catch (Exception e) {
+            cleanSlate(30);
             System.out.println("I don't even know what that could mean... I assume you want to play 10 rounds!");
         }
-        cleanSlate(27);
+
         System.out.println("How many players will be playing? (Write a number between 1-4 and press ENTER)");
         try {
             Scanner scanPlayers = new Scanner(System.in);
             int temp = scanPlayers.nextInt();
             players = Math.max(1, temp);
             players = Math.min(4, players);
+            cleanSlate(30);
             System.out.println("There will be " + players + " players playing!");
         } catch (Exception e) {
+            cleanSlate(30);
             System.out.println("I don't even know what that could mean... I guess you'll have to play alone!");
         }
-        cleanSlate(27);
         for (int i = 1; i <= players; i++) {
             System.out.println("Player " + i + ", please enter your name.");
             new Player(scan.nextLine());
 
         }
         cleanSlate(27);
+    }
+
+    public void readOutVeterinarianBills(Player player){
+        cleanSlate(27);
+        int bills = player.veterinarianBill.size();
+        System.out.println(player.name + ": You have " + bills + " sick animal" + (bills == 1 ? "." : "s.") +
+                "\nPress c to continue!");
+        scan.next();
+        for(Animal animal : player.veterinarianBill){
+            cleanSlate(27);
+            System.out.println(animal.name + " is sick. If you don't pay " + animal.veterinarianCost + " coins, " +
+                    (animal.gender == 0 ? "he" : "she") + " will die! Even if you do pay, there is still " +
+                    animal.chanceOfDeath + " % chance that " + (animal.gender == 0 ? "he" : "she") + " will die!" +
+                    "\nYou have " + player.money + " coins. Would you like to pay the bill? (y/n)");
+            Scanner deathScan = new Scanner(System.in);
+            if(deathScan.next().equals("y")) player.payBill(animal);
+            else player.kill(animal);
+        }
+
     }
 
     //Put number as "" if you start a new round. Put number as "2" if you want case "2".
@@ -113,7 +146,8 @@ public class Game {
             }
 
             case "3" -> {
-                System.out.println("Feed animal");
+                if(feedAnimal(player).equals("y"))
+                    chooseWhatToDo(player, "3");
             }
             case "4" -> {
                 System.out.println("Sell animal");
@@ -167,9 +201,11 @@ public class Game {
             int gender = animalScan.nextInt() - 1;
             cleanSlate(27);
             System.out.println("Please enter in a name for your " +
-                    (gender == 0 ? "male " : "female ") + Store.animalList[animal].name.toLowerCase());
+                    (gender == 0 ? "male " : "female ") + Store.animalList[animal].name.toLowerCase() +
+                    " (1-20 characters or I will pick a name for you!)");
             Scanner nameScan = new Scanner(System.in);
             String name = nameScan.nextLine();
+            if(charactersInWord(name, 0) > 20) name.equals(AnimalNames.animalNames[(int) (Math.random() * 4)]);
             player.buyAnimal(Store.createAnimal(Store.animalList[animal].name, name, gender));
         }
         catch (Exception Return){return "";}
@@ -244,6 +280,49 @@ public class Game {
         cleanSlate(27);
         System.out.println("You bought " + kg + "kg of " + Store.foodList[food - 1].getClass().getSimpleName().
                 toLowerCase() + ". Would you like to buy more food? (y/n)");
+        return scan.next();
+    }
+
+    public String feedAnimal(Player player){
+        cleanSlate(27);
+        seeAnimalList(player, "hideContinueText");
+        System.out.println("\nWhich animal do you want to feed?" + loseATurn);
+        try{
+            Scanner feedScan = new Scanner(System.in);
+            int animal = feedScan.nextInt() - 1;
+            cleanSlate(27);
+            System.out.println("Which food would you like to give " + player.animals.get(animal).name + "?" + loseATurn + "\n");
+            int i = 1;
+            for(Food food : Store.foodList){
+                System.out.println(i++ + ": " + food.getClass().getSimpleName());
+            }
+            int food = feedScan.nextInt() - 1;
+            cleanSlate(27);
+            System.out.println("How many kg of " + Store.foodList[food].getClass().getSimpleName().toLowerCase() +
+                    " would you like to feed " + player.animals.get(animal).name + "? You have " +
+                    player.foods.get(Store.foodList[food].getClass().getSimpleName()) + "kg");
+            Scanner kgScan = new Scanner(System.in);
+            int kg = kgScan.nextInt();
+            kg = Math.max(0, kg);
+            kg = Math.min(player.foods.get(Store.foodList[food].getClass().getSimpleName()), kg);
+            cleanSlate(27);
+            System.out.println("You gave " + player.animals.get(animal).name + " " + kg + "kg of " +
+                    Store.foodList[food].getClass().getSimpleName().toLowerCase());
+            if(player.animals.get(animal).foodsICanEat.contains(food)) {
+                player.feedAnimal(player.animals.get(animal), food, kg);
+                player.animals.get(animal).loseHp = false;
+                System.out.println("Tasty! " + player.animals.get(animal).name + " now has " +
+                        player.animals.get(animal).health  + "hp.");
+            }
+            else{
+                player.foods.put(Store.foodList[food].getClass().getSimpleName(), player.foods.get(food) - kg);
+                System.out.println("That was a waste of food... " + player.animals.get(animal).name + " can't eat " +
+                        Store.foodList[food].getClass().getSimpleName() + " so " +
+                        (player.animals.get(animal).gender == 0 ? "he " : "she ") + "didn't gain any hp.");
+            }
+        }
+        catch (Exception Return){return "";}
+        System.out.println("Would you like to feed more animals? (y/n)");
         return scan.next();
     }
 

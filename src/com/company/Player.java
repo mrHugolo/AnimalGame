@@ -10,6 +10,7 @@ public class Player {
     protected int money;
     protected ArrayList<Animal> animals;
     protected LinkedHashMap<String, Integer> foods;
+    protected ArrayList<Animal> veterinarianBill;
 
     public Player(String name){
         players.add(this);
@@ -19,6 +20,7 @@ public class Player {
         foods = new LinkedHashMap<>();
         foods.put("Carrot", 0);
         foods.put("Steak", 0);
+        veterinarianBill = new ArrayList<>();
 
 
     }
@@ -53,17 +55,11 @@ public class Player {
     }
 
     public void feedAnimal(Animal animal, int foodInFoodList, int kg){
-        if(animal.foodsICanEat.contains(foodInFoodList)) {
-            kg = Math.min(kg, foods.get(Store.foodList[foodInFoodList].getClass().getSimpleName()));
-            //increase as much money as Player lose in buyFood()
-            increaseMoney(Store.foodList[foodInFoodList].price * kg);
-            buyFood(foodInFoodList, kg * -1);
-            animal.health = Math.min(100, animal.health + 10 * kg);
-            return;
-        }
-        System.out.println(animal.name + " can't eat " +
-                Store.foodList[foodInFoodList].getClass().getSimpleName().toLowerCase() +
-        "! That was a waste of a turn...");
+        //kg = Math.min(kg, foods.get(Store.foodList[foodInFoodList].getClass().getSimpleName()));
+        //increase as much money as Player lose in buyFood()
+        increaseMoney(Store.foodList[foodInFoodList].price * kg);
+        buyFood(foodInFoodList, kg * -1);
+        animal.health = Math.min(100, animal.health + 10 * kg);
     }
 
     public void mateTwoAnimals(Animal animal1, Animal animal2) {
@@ -94,15 +90,32 @@ public class Player {
         for(int i = 0; i < males; i++){
             try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), names[i], 0));}
             catch (Exception e){
-                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), AnimalNames.animalNames[i],0));
+                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
+                        AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
         for(int i = 0; i < females; i++){
             try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), names[i], 1));}
             catch (Exception e){
-                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), AnimalNames.animalNames[i],0));
+                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
+                        AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
+    }
+
+    public void getVeterinarianBill(Animal animal){
+        veterinarianBill.add(animal);
+    }
+
+    public void payBill(Animal animal){
+        if(money < animal.veterinarianCost) animal.chanceOfDeath *= 2;
+        if((int) (Math.random() * 100) + 1 <= animal.chanceOfDeath) kill(animal);
+        increaseMoney(Math.max(animal.veterinarianCost * -1, money * -1));
+    }
+
+    public void kill(Animal animal){
+        animal.health = 0;
+        animals.remove(animal);
     }
 
     public void increaseMoney(int addedMoney){

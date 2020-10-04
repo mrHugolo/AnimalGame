@@ -9,13 +9,16 @@ public abstract class Animal {
     //0 = male, 1 = female
     protected int gender;
     protected int health;
-    protected int MAX_AGE = 30;
+    protected double MAX_AGE = 30;
     protected int age;
-    protected int MAX_PRICE = 50000;
+    protected double MAX_PRICE = 50000;
     protected int price;
     protected int numberOfPossibleBabies = 2;
     protected int veterinarianCost = 50000;
     protected ArrayList<Integer> foodsICanEat = new ArrayList<>();
+    protected boolean loseHp = true;
+    protected boolean isSick = false;
+    protected int chanceOfDeath = 20;
 
     public Animal(String name, int gender) {
         this.name = name;
@@ -30,8 +33,8 @@ public abstract class Animal {
     }
 
     public boolean isSick(){
-        return rand.nextInt(5) % 5 == 0;
-
+        isSick = rand.nextInt(5) % 5 == 0;
+        return isSick;
     }
 
     public String showFoodsICanEat(){
