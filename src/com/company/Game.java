@@ -154,7 +154,7 @@ public class Game {
                     chooseWhatToDo(player, "4");
             }
             case "5" -> {
-                System.out.println("Mate...");
+                mate(player);
             }
             case "a" -> {
                 seeAnimalList(player, "");
@@ -292,7 +292,7 @@ public class Game {
             Scanner feedScan = new Scanner(System.in);
             int animal = feedScan.nextInt() - 1;
             cleanSlate(27);
-            System.out.println("Which food would you like to give " + player.animals.get(animal).name + "?" + loseATurn + "\n");
+            System.out.println("Which food would you like to give " + player.animals.get(animal).name + "?" + loseATurn);
             int i = 1;
             for(Food food : Store.foodList){
                 System.out.println(i++ + ": " + food.getClass().getSimpleName());
@@ -369,6 +369,27 @@ public class Game {
         if(player.animals.size() == 0) return "";
         System.out.println("Would you like to sell more animals? (y/n)");
         return scan.next();
+    }
+
+    public void mate(Player player){
+        cleanSlate(27);
+        System.out.println("Pick two animals, separated by a space." +
+                " They will try to make a few babies." + loseATurn);
+        int i = 1;
+        for(Animal animal : player.animals){
+            System.out.println(i++ + ": " + animal.name + " the " + animal.getClass().getSimpleName().toLowerCase() +
+                    "     Gender: " + animal.getGenderString() +
+                    "     Possible babies: " + animal.numberOfPossibleBabies);
+        }
+        try {
+            Scanner mateScan = new Scanner(System.in);
+            String[] twoNumbers = mateScan.nextLine().split(" ");
+            int animal1 = Integer.parseInt(twoNumbers[0]) - 1;
+            int animal2 = Integer.parseInt(twoNumbers[1]) - 1;
+
+            player.mateTwoAnimals(player.animals.get(animal1), player.animals.get(animal2));
+        }
+        catch (Exception Return){return;}
     }
 
     public int seeAnimalList(Player player, String hideContinueText) {

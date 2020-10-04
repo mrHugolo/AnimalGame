@@ -94,7 +94,7 @@ public class Player {
                         AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
-        for(int i = 0; i < females; i++){
+        for(int i = males; i < females + males; i++){
             try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), names[i], 1));}
             catch (Exception e){
                 animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
