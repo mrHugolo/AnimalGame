@@ -16,7 +16,11 @@ public class Player {
         this.name = name;
         money = 50000;
         animals = new ArrayList<Animal>();
-        foods = Store.defaultFoodList;
+        foods = new LinkedHashMap<>();
+        foods.put("Carrot", 0);
+        foods.put("Steak", 0);
+
+
     }
 
     public void buyFood(int foodInFoodList, int kg){
