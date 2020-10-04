@@ -30,13 +30,15 @@ public class Player {
     }
 
     //players will only be 0 or 1
-    public void buyAnimal(Animal animal, Player ... players){
+    public int buyAnimal(Animal animal, Player ... players){
+        if(animal.calculatePrice() > money) return -1;
         if(players.length != 0) {
             players[0].animals.remove(animal);
             players[0].increaseMoney(animal.calculatePrice());
         }
         this.animals.add(animal);
         increaseMoney(animal.calculatePrice() * -1);
+        return 0;
     }
 
     //players will only be 0 or 1
