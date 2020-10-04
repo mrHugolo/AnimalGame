@@ -150,7 +150,8 @@ public class Game {
                     chooseWhatToDo(player, "3");
             }
             case "4" -> {
-                System.out.println("Sell animal");
+                if(sellAnimal(player).equals("y"))
+                    chooseWhatToDo(player, "4");
             }
             case "5" -> {
                 System.out.println("Mate...");
@@ -323,6 +324,50 @@ public class Game {
         }
         catch (Exception Return){return "";}
         System.out.println("Would you like to feed more animals? (y/n)");
+        return scan.next();
+    }
+
+    public String sellAnimal(Player player){
+        cleanSlate(27);
+        System.out.println("Which animal do you want to sell?" + loseATurn + "\n");
+        int i = 1;
+        for(Animal animal : player.animals){
+            System.out.println(i++ + ": " + animal.name + " the " + animal.getClass().getSimpleName().toLowerCase() +
+                    ": " + animal.price + " coins.");
+
+        }
+        try{
+            Scanner animalScan = new Scanner(System.in);
+            int animal = animalScan.nextInt() - 1;
+            cleanSlate(27);
+            System.out.println("Where would you like to sell " + player.animals.get(animal).name + "?" + loseATurn +
+                    "\n1. The Store\n2. Other Player");
+            String number = animalScan.next();
+            if(number.equals("1")) player.sellAnimal(player.animals.get(animal));
+            else if(number.equals("2")){
+                cleanSlate(27);
+                System.out.println("Which player do you want to sell " + player.animals.get(animal).name + " to?");
+                for(int j = 1; j < Player.players.size(); j++){
+                    System.out.println(j + ". " + (Player.players.indexOf(player) < j ? Player.players.get(j).name :
+                            Player.players.get(j - 1).name));
+                }
+                Scanner playerScan = new Scanner(System.in);
+                int choice = playerScan.nextInt();
+                choice = Player.players.indexOf(player) < choice ? choice : choice - 1;
+                cleanSlate(27);
+                System.out.println(Player.players.get(choice).name + ": Do you want to buy " +
+                        player.animals.get(animal).name + " the " +
+                        player.animals.get(animal).getClass().getSimpleName().toLowerCase() +
+                        " for " + player.animals.get(animal).price + " coins? (y/n)");
+                String yOrN = scan.next();
+                if(yOrN.equals("y")) player.sellAnimal(player.animals.get(animal), Player.players.get(choice));
+            }
+            else return "";
+
+        }
+        catch (Exception Return){return "";}
+        if(player.animals.size() == 0) return "";
+        System.out.println("Would you like to sell more animals? (y/n)");
         return scan.next();
     }
 
