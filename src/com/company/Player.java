@@ -76,12 +76,15 @@ public class Player {
         }
         if(males + females == 0) {
             System.out.println("You didn't get any babies!");
+            System.out.println("Press c to continue!");
+            scan.next();
             return;
         }
         System.out.printf("%s %d %s %d %s %d %s %d %s",
                 "You got ", males + females, " out of ", animal1.numberOfPossibleBabies, " possible babies, ",
                 males, " male and ", females, " female. What would you like to name them?");
-        System.out.println(" Enter " + (males + females) + " name" + (males + females == 1 ? "" : "s differentiated by a space"));
+        System.out.println(" Enter " + (males + females) + " name" +
+                (males + females == 1 ? "" : "s differentiated by a space"));
 
         String[] names = scan.nextLine().split(" ");
         if(names.length > males + females) System.out.println("You wrote too many names, I'll remove some of them!");
@@ -101,6 +104,8 @@ public class Player {
                         AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
+        System.out.println("Press c to continue!");
+        scan.next();
     }
 
     public void getVeterinarianBill(Animal animal){
@@ -109,11 +114,14 @@ public class Player {
 
     public void payBill(Animal animal){
         if(money < animal.veterinarianCost) animal.chanceOfDeath *= 2;
-        if((int) (Math.random() * 100) + 1 <= animal.chanceOfDeath) kill(animal);
         increaseMoney(Math.max(animal.veterinarianCost * -1, money * -1));
+        if((int) (Math.random() * 100) + 1 <= animal.chanceOfDeath) kill(animal);
+        else System.out.println(animal.name + " survived!");
+
     }
 
     public void kill(Animal animal){
+        System.out.println(animal.name + " died!");
         animal.health = 0;
         animals.remove(animal);
     }

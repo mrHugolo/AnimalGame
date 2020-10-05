@@ -1,5 +1,6 @@
 package com.company;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.*;
 
 public class Game {
@@ -13,19 +14,13 @@ public class Game {
             " you will lose your turn.\n\u001B[0m";
 
     public Game() {
-        Store s = new Store();
-
         rules();
         decideRoundsAndPlayers();
-        Player.players.get(0).buyAnimal(Store.createAnimal("Bear", "Yogi", 0));
-        Player.players.get(0).buyAnimal(Store.createAnimal("Bear", "Brumme_Lisa", 1));
-        while (round < rounds || Player.players.size() == 0) {
+        while (round <= rounds || Player.players.size() == 0) {
             for (Player player : Player.players) {
                 readOutVeterinarianBills(player);
                 chooseWhatToDo(player, "");
             }
-
-
             for(Player player : Player.players){
                 for(Animal animal : player.animals){
                     animal.age++;
@@ -36,7 +31,12 @@ public class Game {
             }
             round++;
         }
-        System.out.println("GAME OVER Hugo won :)");
+        for(Player player : Player.players){
+            while(player.animals.size() > 0){
+                player.sellAnimal(player.animals.get(0));
+            }
+        }
+        showWhoWon(Player.players);
     }
 
     public void rules() {
@@ -114,6 +114,8 @@ public class Game {
             Scanner deathScan = new Scanner(System.in);
             if(deathScan.next().equals("y")) player.payBill(animal);
             else player.kill(animal);
+            System.out.println("Press c to continue!");
+            scan.next();
         }
 
     }
@@ -333,7 +335,7 @@ public class Game {
         int i = 1;
         for(Animal animal : player.animals){
             System.out.println(i++ + ": " + animal.name + " the " + animal.getClass().getSimpleName().toLowerCase() +
-                    ": " + animal.price + " coins.");
+                    ": " + animal.calculatePrice() + " coins.");
 
         }
         try{
@@ -358,7 +360,7 @@ public class Game {
                 System.out.println(Player.players.get(choice).name + ": Do you want to buy " +
                         player.animals.get(animal).name + " the " +
                         player.animals.get(animal).getClass().getSimpleName().toLowerCase() +
-                        " for " + player.animals.get(animal).price + " coins? (y/n)");
+                        " for " + player.animals.get(animal).calculatePrice() + " coins? (y/n)");
                 String yOrN = scan.next();
                 if(yOrN.equals("y")) player.sellAnimal(player.animals.get(animal), Player.players.get(choice));
             }
@@ -390,6 +392,28 @@ public class Game {
             player.mateTwoAnimals(player.animals.get(animal1), player.animals.get(animal2));
         }
         catch (Exception Return){return;}
+    }
+
+    public void showWhoWon(ArrayList<Player> players){
+        cleanSlate(27);
+        System.out.println("HERE ARE THE STANDINGS:");
+        ArrayList<Player> order = new ArrayList<>();
+        order.add(players.get(0));
+
+        for(int j = 1; j < players.size(); j++){
+            for(int i = 0; i < order.size(); i++){
+                if(players.get(j).money >= order.get(i).money) {
+                    order.add(i, players.get(j));
+                    break;
+                }
+                else if(i == order.size() - 1) {
+                    order.add(i + 1, players.get(j));
+                    break;
+                }
+            }
+        }
+        for(int i = 0; i < order.size(); i++) System.out.println((i + 1) + ". " + order.get(i).name +
+                "    : " + order.get(i).money + " coins");
     }
 
     public int seeAnimalList(Player player, String hideContinueText) {
