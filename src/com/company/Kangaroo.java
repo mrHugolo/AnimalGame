@@ -11,7 +11,7 @@ public class Kangaroo extends Animal {
         super.numberOfPossibleBabies = 3;
         super.veterinarianCost = 1000;
         super.chanceOfDeath = 0;
-        super.howMuchFoodICAnEat = 4;
+        super.howMuchFoodICanEat = 4;
         super.foodsICanEat = new ArrayList<Integer>();
         foodsICanEat.add(0);  //Fruit
         foodsICanEat.add(4);  //Grass

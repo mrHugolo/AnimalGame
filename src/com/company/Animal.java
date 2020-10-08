@@ -16,7 +16,8 @@ public abstract class Animal {
     protected int numberOfPossibleBabies = 2;
     protected int veterinarianCost = 50000;
     protected ArrayList<Integer> foodsICanEat = new ArrayList<>();
-    protected int howMuchFoodICAnEat = 10;
+    protected int howMuchFoodICanEat = 10;
+    protected int howMuchFoodIAteToday;
     protected boolean loseHp = true;
     protected boolean isSick = false;
     protected int chanceOfDeath = 20;
@@ -26,6 +27,7 @@ public abstract class Animal {
         this.gender = gender;
         health = 100;
         age = 0;
+        howMuchFoodIAteToday = 0;
 
     }
 
@@ -34,9 +36,8 @@ public abstract class Animal {
     }
 
     public boolean isSick(){
-        int chanceOfSickness = (int) (10 + age * (30 / MAX_AGE));
-        isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
-        return isSick;
+        int chanceOfSickness = (int) ((70 / (health + 1)) * (5 + age * (30 / MAX_AGE)));
+        return isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
     }
 
     public String showFoodsICanEat(){

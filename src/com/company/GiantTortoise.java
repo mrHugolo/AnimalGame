@@ -12,7 +12,7 @@ public class GiantTortoise extends Animal {
         super.numberOfPossibleBabies = 8;
         super.veterinarianCost = 1000;
         super.chanceOfDeath = 0;
-        super.howMuchFoodICAnEat = 5;
+        super.howMuchFoodICanEat = 5;
         super.foodsICanEat = new ArrayList<Integer>();
         foodsICanEat.add(0);  //Fruit
 

@@ -18,8 +18,11 @@ public class Player {
         money = 50000;
         animals = new ArrayList<Animal>();
         foods = new LinkedHashMap<>();
-        foods.put("Carrot", 0);
-        foods.put("Steak", 0);
+        foods.put("Fruit", 0);
+        foods.put("Berries", 0);
+        foods.put("Nuts", 0);
+        foods.put("Fish", 0);
+        foods.put("Grass", 0);
         veterinarianBill = new ArrayList<>();
 
 
@@ -86,19 +89,29 @@ public class Player {
         System.out.println(" Enter " + (males + females) + " name" +
                 (males + females == 1 ? "" : "s differentiated by a space"));
 
-        String[] names = scan.nextLine().split(" ");
-        if(names.length > males + females) System.out.println("You wrote too many names, I'll remove some of them!");
-        else if(names.length < males + females) System.out.println("You didn't write enough names, I'll add some!");
+        Scanner stringScan = new Scanner(System.in);
+        String names = stringScan.nextLine();
+        String[] nameList = names.split(" ");
+
+        for(int i = 0; i < nameList.length; i++){
+            if(Game.charactersInWord(nameList[i], 0) > 20 || Game.charactersInWord(nameList[i], 0) == 0){
+                nameList[i] = (AnimalNames.animalNames[(int) (Math.random() * 4)]);
+            System.out.println(name);
+            }
+        }
+
+        if(nameList.length > males + females) System.out.println("You wrote too many names, I'll remove some of them!");
+        else if(nameList.length < males + females) System.out.println("You didn't write enough names, I'll add some!");
 
         for(int i = 0; i < males; i++){
-            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), names[i], 0));}
+            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 0));}
             catch (Exception e){
                 animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
                         AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
         for(int i = males; i < females + males; i++){
-            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), names[i], 1));}
+            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 1));}
             catch (Exception e){
                 animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
                         AnimalNames.animalNames[(int) (Math.random() * 4)],0));
@@ -106,6 +119,10 @@ public class Player {
         }
         System.out.println("Press c to continue!");
         scan.next();
+    }
+
+    public boolean checkIfPlayerDied(){
+        return (money == 0 && animals.size() == 0);
     }
 
     public void getVeterinarianBill(Animal animal){

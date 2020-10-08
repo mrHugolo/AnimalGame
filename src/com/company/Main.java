@@ -8,7 +8,7 @@ public class Main {
     //WHILE MOUSE IS IN TEXT INSTEAD OF AFTER
 
     public static void main(String[] args) {
-        Game g = new Game();
+        new Game();
 
 
     }

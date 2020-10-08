@@ -12,7 +12,7 @@ public class Bear extends Animal{
         super.numberOfPossibleBabies = 5;
         super.veterinarianCost = 1000;
         super.chanceOfDeath = 0;
-        super.howMuchFoodICAnEat = 10;
+        super.howMuchFoodICanEat = 10;
         super.foodsICanEat = new ArrayList<Integer>();
         foodsICanEat.add(1);  //Berries
         foodsICanEat.add(3);  //Fish
