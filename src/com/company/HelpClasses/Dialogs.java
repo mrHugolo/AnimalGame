@@ -1,5 +1,7 @@
 package com.company.HelpClasses;
 
+import com.company.Animal;
+
 import java.util.*;
 
 public class Dialogs {
@@ -7,9 +9,31 @@ public class Dialogs {
 
 
 
+    public static String menuWithLetters(String title, String ... options){
+        System.out.println(title);
+        for(int i = 0; i < options.length; i += 2){
+            System.out.println(options[i] + " ".repeat(40 - charCounter(options[i], 0)) + options[i + 1]);
+        }
+        String choice = scan.next();
+        for(String option : options){
+            if(choice.equals(option.split("")[0])) return choice;
+        }
+        return "default";
+    }
+
+    public static int menu(String title, String options){
+
+        return 0;
+    }
+
     public static void continuePlaying(){
         System.out.println("Press c followed by ENTER to continue!");
         scan.next();
+    }
+
+    public static boolean promptString(String question, String answer){
+        System.out.println(question);
+        return scan.nextLine().equals(answer);
     }
 
     public static int promptInt(String question, int min, int max){
@@ -20,6 +44,10 @@ public class Dialogs {
         choice = Math.max(min, choice);
         choice = Math.min(max, choice);
         return choice;
+    }
+
+    public static String animalName(Animal animal){
+        return animal.getName() + " the " + animal.getClass().getSimpleName().toLowerCase();
     }
 
     public static void cleanSlate(int invisibleAt27){

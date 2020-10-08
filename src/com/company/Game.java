@@ -20,7 +20,7 @@ public class Game {
                     Dialogs.continuePlaying();
                     continue;
                 }
-                readOutVeterinarianBills(player, player.veterinarianBill.size());
+                readOutVeterinarianBills(player);
                 chooseWhatToDo(player, "");
             }
             for (Player player : Player.players) {
@@ -48,57 +48,55 @@ public class Game {
         }
     }
 
-    public void readOutVeterinarianBills(Player player, int sickAnimals) {
-        if (sickAnimals == 0) return;
+    public void readOutVeterinarianBills(Player player) {
+        int bills = player.veterinarianBill.size();
+        if (bills == 0) return;
 
         Dialogs.cleanSlate(30);
-        int bills = player.veterinarianBill.size();
-
+        System.out.println(player.name + ": You have " + bills + " sick animal" + (bills == 1 ? "." : "s."));
         for (Animal animal : player.veterinarianBill) {
             Dialogs.cleanSlate(30);
-            System.out.println(player.name + ": You have " + bills + " sick animal" + (bills == 1 ? "." : "s.") +
-                    "\n" + animal.name + " the " + animal.getClass().getSimpleName().toLowerCase());
-            System.out.println("Press c to continue.");
-            scan.next();
+            System.out.println(Dialogs.animalName(animal));
+        }
+            Dialogs.continuePlaying();
+        for(Animal animal : player.animals) {
             System.out.println(animal.name + " is sick. If you don't pay " + animal.veterinarianCost + " coins, " +
                     (animal.gender == 0 ? "he" : "she") + " will die! Even if you do pay, there is still " +
                     animal.chanceOfDeath + " % chance that " + (animal.gender == 0 ? "he" : "she") + " will die!" +
-                    "\nYou have " + player.money + " coins. Would you like to pay the bill? (y/n)");
-            Scanner deathScan = new Scanner(System.in);
-            if (deathScan.next().equals("y")) player.payBill(animal);
+                    "\nYou have " + player.money + " coins.");
+
+            if (Dialogs.promptString("Would you like to pay the bill? (y/n)", "y")) player.payBill(animal);
             else player.kill(animal);
-            System.out.println("Press c to continue!");
-            scan.next();
+            Dialogs.continuePlaying();
         }
 
     }
 
     public void sellAllAnimals(){
         for (Player player : Player.players) {
-            while (player.animals.size() > 0) {
-                player.sellAnimal(player.animals.get(0));
+            for (Animal animal : player.animals) {
+                player.sellAnimal(animal);
             }
         }
     }
 
-    //Put number as "" if you start a new round. Put number as "2" if you want case "2".
-    public void chooseWhatToDo(Player player, String number) {
-        if (number.equals("")) {
-            int chars = Dialogs.charCounter(player.name, 0);
-            Dialogs.cleanSlate(30);
-            System.out.println("It's " + player.name + "'s turn and you have " + player.money + " coins. " +
-                    "Enter the number/letter next to the action you want to do!"
-                    + "\n\n1. Buy animals" + " ".repeat(40 + chars) + "a. Show AnimalList\n"
-                    + "2. Buy food" + " ".repeat(43 + chars) + "f. Show FoodList");
+    //Put number as "2" if you want case "2".
+    public void chooseWhatToDo(Player player, String ... number) {
+        Dialogs.cleanSlate(30);
+        String choice;
+        if (number.length == 0) {
+            choice = Dialogs.menuWithLetters(player.name +
+                            ": Enter the number/letter next to the action you want to do!\n",
 
-            System.out.println(player.animals.size() == 0 ? " ".repeat(54 + chars) + "i. Show Info" :
-                    "3. Feed animals" + " ".repeat(39 + chars) + "i. Show Info\n" +
-                            "4. Sell animals\n5. Pick two animals to mate");
-            String choice = scan.next();
-            if (player.animals.size() == 0 && choice.matches("[3-5]")) choice = "default";
-            number = choice;
+                    "1. Buy Animals", "a. Show Animal List",
+                    "2. Buy food", "f. Show Food List",
+                    "3. Feed Animals", "i. Show Info",
+                    "4. Sell Animals", "s. Skip Your Turn",
+                    "5. Pick two animals to mate", "");
         }
-        switch (number) {
+        else choice = number[0];
+
+        switch (choice) {
             case "1" -> {
                 if (buyAnimal(player).equals("y"))
                     chooseWhatToDo(player, "1");
@@ -120,17 +118,19 @@ public class Game {
 
             case "a" -> {
                 seeAnimalList(player, "");
-                chooseWhatToDo(player, "");
+                chooseWhatToDo(player);
             }
             case "f" -> {
                 seeFoodList(player);
-                chooseWhatToDo(player, "");
+                chooseWhatToDo(player);
             }
             case "i" -> {
                 seeInfo();
-                chooseWhatToDo(player, "");
+                chooseWhatToDo(player);
             }
-            default -> chooseWhatToDo(player, "");
+            case "s" -> {}
+
+            default -> chooseWhatToDo(player );
         }
     }
 

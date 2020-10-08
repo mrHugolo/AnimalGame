@@ -56,6 +56,8 @@ public abstract class Animal {
         return isSick();
     }
 
+    public String getName(){ return name; }
+
     public String getGenderString() {
         return gender == 0 ? "male" : "female";
     }
