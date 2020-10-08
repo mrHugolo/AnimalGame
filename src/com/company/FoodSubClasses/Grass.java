@@ -1,4 +1,6 @@
-package com.company;
+package com.company.FoodSubClasses;
+
+import com.company.Food;
 
 public class Grass extends Food {
 

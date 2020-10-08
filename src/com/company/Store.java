@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.AnimalSubClasses.*;
+import com.company.FoodSubClasses.*;
+
 public class Store {
 
     protected static Food[] foodList = {

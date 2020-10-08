@@ -196,7 +196,7 @@ public class Game {
             cleanSlate(30);
         } else if (choice.equals("2")) {
             String buyAnimalFromPlayer = buyAnimalFromPlayer(player);
-            if (buyAnimalFromPlayer.equals("Try again.")) {/*do nothing*/}
+             if (buyAnimalFromPlayer.equals("Try again.")) {/*do nothing*/}
             else if (!buyAnimalFromPlayer.equals("I bought an animal.")) return "";
             else cleanSlate(30);
 
