@@ -1,7 +1,5 @@
 package com.company;
 
-
-
 public class Store {
 
     protected static Food[] foodList = {
@@ -35,12 +33,4 @@ public class Store {
             default -> {return null;}
         }
     }
-
-
-
-
-
-
-
-
 }

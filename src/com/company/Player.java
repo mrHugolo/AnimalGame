@@ -16,7 +16,7 @@ public class Player {
         players.add(this);
         this.name = name;
         money = 50000;
-        animals = new ArrayList<Animal>();
+        animals = new ArrayList<>();
         foods = new LinkedHashMap<>();
         foods.put("Fruit", 0);
         foods.put("Berries", 0);
@@ -146,14 +146,5 @@ public class Player {
     public void increaseMoney(int addedMoney){
         this.money += addedMoney;
     }
-
-    public ArrayList<String> getAnimalNames(){
-        ArrayList<String> animalNames = new ArrayList<>();
-        for(Animal animal : animals) animalNames.add(animal.name);
-        return animalNames;
-    }
-
-
-
 
 }

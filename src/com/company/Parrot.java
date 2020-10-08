@@ -12,7 +12,7 @@ public class Parrot extends Animal {
         super.veterinarianCost = 1000;
         super.chanceOfDeath = 0;
         super.howMuchFoodICanEat = 1;
-        super.foodsICanEat = new ArrayList<Integer>();
+        super.foodsICanEat = new ArrayList<>();
         foodsICanEat.add(0);  //Fruit
         foodsICanEat.add(1);  //Berries
         foodsICanEat.add(2);  //Nuts

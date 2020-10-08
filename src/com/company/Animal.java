@@ -31,21 +31,21 @@ public abstract class Animal {
 
     }
 
-    public void loseHealth(){
+    public void loseHealth() {
         health -= rand.nextInt(21) + 10;
     }
 
-    public boolean isSick(){
+    public boolean isSick() {
         int chanceOfSickness = (int) ((70 / (health + 1)) * (5 + age * (30 / MAX_AGE)));
         return isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
     }
 
-    public String showFoodsICanEat(){
-        String list = "";
-        for(int food : foodsICanEat) {
-            list += Store.foodList[food].getClass().getSimpleName() + " ";
+    public String showFoodsICanEat() {
+        StringBuilder list = new StringBuilder();
+        for (int food : foodsICanEat) {
+            list.append(Store.foodList[food].getClass().getSimpleName()).append(" ");
         }
-        return list;
+        return list.toString();
     }
 
     public String getGenderString() {
@@ -56,10 +56,9 @@ public abstract class Animal {
         //price increase linearly the first 1/3 of its maximum lifespan
         //but price decrease linearly the last 2/3 of its maximum lifespan
         price = (age <= MAX_AGE / 3 ? MAX_PRICE * ((3 * age) / (5 * MAX_AGE) + 0.8)
-                        : MAX_PRICE * (1.5 - (3 * age) / (2 * MAX_AGE)));
+                : MAX_PRICE * (1.5 - (3 * age) / (2 * MAX_AGE)));
         price *= ((double) health / 100);
         return (int) price;
     }
-
 
 }

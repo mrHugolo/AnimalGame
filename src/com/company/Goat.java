@@ -12,7 +12,7 @@ public class Goat extends Animal {
         super.veterinarianCost = 1000;
         super.chanceOfDeath = 0;
         super.howMuchFoodICanEat = 2;
-        super.foodsICanEat = new ArrayList<Integer>();
+        super.foodsICanEat = new ArrayList<>();
         foodsICanEat.add(4);  //Grass
     }
 }

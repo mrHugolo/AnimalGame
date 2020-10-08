@@ -12,7 +12,7 @@ public class Crocodile extends Animal {
         super.veterinarianCost = 5000;
         super.chanceOfDeath = 0;
         super.howMuchFoodICanEat = 3;
-        super.foodsICanEat = new ArrayList<Integer>();
+        super.foodsICanEat = new ArrayList<>();
         foodsICanEat.add(3);  //Fish
     }
 }
