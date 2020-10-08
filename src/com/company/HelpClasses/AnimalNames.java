@@ -1,4 +1,4 @@
-package com.company;
+package com.company.HelpClasses;
 
 public abstract class AnimalNames {
 

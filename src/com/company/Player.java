@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.HelpClasses.AnimalNames;
+import com.company.HelpClasses.Dialogs;
+
 import java.util.*;
 
 public class Player {
@@ -94,7 +97,7 @@ public class Player {
         String[] nameList = names.split(" ");
 
         for(int i = 0; i < nameList.length; i++){
-            if(Game.charactersInWord(nameList[i], 0) > 20 || Game.charactersInWord(nameList[i], 0) == 0){
+            if(Dialogs.charCounter(nameList[i], 0) > 20 || Dialogs.charCounter(nameList[i], 0) == 0){
                 nameList[i] = (AnimalNames.animalNames[(int) (Math.random() * 4)]);
             System.out.println(name);
             }
