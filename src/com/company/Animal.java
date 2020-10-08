@@ -48,6 +48,14 @@ public abstract class Animal {
         return list.toString();
     }
 
+    public boolean endOfTurn(){
+        age++;
+        howMuchFoodIAteToday = 0;
+        if (loseHp) loseHealth();
+        loseHp = true;
+        return isSick();
+    }
+
     public String getGenderString() {
         return gender == 0 ? "male" : "female";
     }

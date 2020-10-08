@@ -7,6 +7,11 @@ public class Dialogs {
 
 
 
+    public static void continuePlaying(){
+        System.out.println("Press c followed by ENTER to continue!");
+        scan.next();
+    }
+
     public static int promptInt(String question, int min, int max){
         System.out.println(question + " (" + min + "-" + max + ")");
         int choice = min;

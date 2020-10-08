@@ -16,10 +16,8 @@ public class Game {
         decideRoundsAndPlayers();
         while (round <= rounds || Player.players.size() == 0) {
             for (Player player : Player.players) {
-                if (player.checkIfPlayerDied()) {
-                    System.out.println(player.name + ": You have died!\nPress c to continue");
-                    Player.players.remove(player);
-                    scan.next();
+                if(player.checkIfPlayerDied()) {
+                    Dialogs.continuePlaying();
                     continue;
                 }
                 readOutVeterinarianBills(player, player.veterinarianBill.size());
@@ -27,20 +25,12 @@ public class Game {
             }
             for (Player player : Player.players) {
                 for (Animal animal : player.animals) {
-                    animal.age++;
-                    if (animal.loseHp) animal.loseHealth();
-                    animal.loseHp = true;
-                    if (animal.isSick()) player.getVeterinarianBill(animal);
-                    animal.howMuchFoodIAteToday = 0;
+                    if(animal.endOfTurn()) player.getVeterinarianBill(animal);
                 }
             }
             round++;
         }
-        for (Player player : Player.players) {
-            while (player.animals.size() > 0) {
-                player.sellAnimal(player.animals.get(0));
-            }
-        }
+        sellAllAnimals();
         showWhoWon(Player.players);
     }
 
@@ -81,6 +71,14 @@ public class Game {
             scan.next();
         }
 
+    }
+
+    public void sellAllAnimals(){
+        for (Player player : Player.players) {
+            while (player.animals.size() > 0) {
+                player.sellAnimal(player.animals.get(0));
+            }
+        }
     }
 
     //Put number as "" if you start a new round. Put number as "2" if you want case "2".

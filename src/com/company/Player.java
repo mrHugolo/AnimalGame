@@ -125,7 +125,12 @@ public class Player {
     }
 
     public boolean checkIfPlayerDied(){
-        return (money == 0 && animals.size() == 0);
+        if(money == 0 && animals.size() == 0){
+            System.out.println(name + " died!");
+            players.remove(this);
+            return true;
+        }
+        return false;
     }
 
     public void getVeterinarianBill(Animal animal){
