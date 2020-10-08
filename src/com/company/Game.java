@@ -9,7 +9,7 @@ public class Game {
     Scanner scan = new Scanner(System.in);
 
     private int round = 1;
-    private int rounds = 10;
+    private int rounds = 5;
 
     public Game() {
         Dialogs.rules();
@@ -86,13 +86,14 @@ public class Game {
         String choice;
         if (number.length == 0) {
             choice = Dialogs.menuWithLetters(player.name +
-                            ": Enter the number/letter next to the action you want to do!\n",
+                            ": You have " + player.money +" coins. " +
+                            "Enter the number/letter next to the action you want to do!\n",
 
                     "1. Buy Animals", "a. Show Animal List",
-                    "2. Buy food", "f. Show Food List",
+                    "2. Buy Food", "f. Show Food List",
                     "3. Feed Animals", "i. Show Info",
                     "4. Sell Animals", "s. Skip Your Turn",
-                    "5. Pick two animals to mate", "");
+                    "5. Pick Two Animals to Mate", "");
         }
         else choice = number[0];
 
@@ -226,35 +227,20 @@ public class Game {
 
     public String buyFood(Player player) {
         Dialogs.cleanSlate(30);
-        System.out.println("What kind of food would you like to buy?" + Dialogs.loseATurn +
-                "\n1. Fruit " + Store.foodList[0].price + " coins/kg" +
-                "\n2. Berries " + Store.foodList[1].price + " coins/kg" +
-                "\n3. Nuts " + Store.foodList[2].price + " coins/kg" +
-                "\n4. Fish " + Store.foodList[3].price + " coins/kg" +
-                "\n5. Grass " + Store.foodList[4].price + " coins/kg");
+        String[] options = new String[Store.foodList.length];
+        for(int i = 0; i < Store.foodList.length; i++)
+            options[i] = Store.foodList[i].name + " " + Store.foodList[i].price + " coins/kg";
+        int food = Dialogs.menu("What kind of food would you like to buy?", options) - 1;
 
-        Scanner foodScan = new Scanner(System.in);
-        String temp = foodScan.nextLine();
-        if (!temp.matches("[1-5]")) return "";
-
-        int food = temp.compareTo("0");
         Dialogs.cleanSlate(30);
-        System.out.println("How many kg of " + Store.foodList[food - 1].getClass().getSimpleName().toLowerCase() +
-                " would you like to buy?\nThe max amount you can buy is " +
-                (player.money / Store.foodList[food - 1].price) + "kg.");
-
-        int kg = 0;
-        try {
-            kg = scan.nextInt();
-            kg = Math.max(0, kg);
-            kg = Math.min(player.money / Store.foodList[food - 1].price, kg);
-        } catch (Exception ignore) {
-        }
-        player.buyFood(food - 1, kg);
+        int kg = Dialogs.promptInt("How many kg of " + Store.foodList[food].name +
+                " would you like to buy?", 0, (player.money / Store.foodList[food].price));
+        player.buyFood(food, kg);
         Dialogs.cleanSlate(30);
-        System.out.println("You bought " + kg + "kg of " + Store.foodList[food - 1].getClass().getSimpleName().
-                toLowerCase() + ". Would you like to buy more food? (y/n)");
-        return scan.next();
+
+        if(Dialogs.promptString("You bought " + kg + "kg of " + Store.foodList[food].name +
+                ". Would you like to buy more food? (y/n)", "y")) return "y";
+        return"";
     }
 
     public String feedAnimal(Player player) {
@@ -265,7 +251,8 @@ public class Game {
             Scanner feedScan = new Scanner(System.in);
             int animal = feedScan.nextInt() - 1;
             Dialogs.cleanSlate(30);
-            System.out.println("Which food would you like to give " + player.animals.get(animal).name + "?" + Dialogs.loseATurn);
+            System.out.println("Which food would you like to give " +
+                    player.animals.get(animal).name + "?" + Dialogs.loseATurn);
             int i = 1;
             for (Food food : Store.foodList) {
                 System.out.println(i++ + ": " + food.getClass().getSimpleName());

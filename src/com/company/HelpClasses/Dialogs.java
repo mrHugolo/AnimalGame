@@ -21,9 +21,17 @@ public class Dialogs {
         return "default";
     }
 
-    public static int menu(String title, String options){
-
-        return 0;
+    public static int menu(String title, String ... options){
+        System.out.println(title);
+        int tracker = 1;
+        for(String option : options)
+            System.out.println(tracker++ + ". " + option);
+        int choice = 0;
+        try{
+            choice = Integer.parseInt(scan.next());
+        }
+        catch (Exception ignore){}
+        return choice < 1 || choice > options.length ? menu(title, options) : choice;
     }
 
     public static void continuePlaying(){
@@ -33,7 +41,8 @@ public class Dialogs {
 
     public static boolean promptString(String question, String answer){
         System.out.println(question);
-        return scan.nextLine().equals(answer);
+        String check = scan.next();
+        return check.equals(answer);
     }
 
     public static int promptInt(String question, int min, int max){
