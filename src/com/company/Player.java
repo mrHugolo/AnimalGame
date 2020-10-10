@@ -13,7 +13,6 @@ public class Player {
     protected int money;
     protected ArrayList<Animal> animals;
     protected LinkedHashMap<String, Integer> foods;
-    protected ArrayList<Animal> veterinarianBill;
 
     public Player(String name){
         players.add(this);
@@ -26,7 +25,6 @@ public class Player {
         foods.put("Nuts", 0);
         foods.put("Fish", 0);
         foods.put("Grass", 0);
-        veterinarianBill = new ArrayList<>();
 
 
     }
@@ -117,7 +115,7 @@ public class Player {
             try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 1));}
             catch (Exception e){
                 animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
-                        AnimalNames.animalNames[(int) (Math.random() * 4)],0));
+                        AnimalNames.animalNames[(int) (Math.random() * 4)],1));
             }
         }
         System.out.println("Press c to continue!");
@@ -131,10 +129,6 @@ public class Player {
             return true;
         }
         return false;
-    }
-
-    public void getVeterinarianBill(Animal animal){
-        veterinarianBill.add(animal);
     }
 
     public void payBill(Animal animal){

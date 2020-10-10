@@ -20,6 +20,7 @@ public abstract class Animal {
     protected int howMuchFoodIAteToday;
     protected boolean loseHp = true;
     protected boolean isSick = false;
+    protected boolean isDead = false;
     protected int chanceOfDeath = 20;
 
     public Animal(String name, int gender) {
@@ -35,9 +36,9 @@ public abstract class Animal {
         health -= rand.nextInt(21) + 10;
     }
 
-    public boolean isSick() {
+    public void isSick() {
         int chanceOfSickness = (int) ((70 / (health + 1)) * (5 + age * (30 / MAX_AGE)));
-        return isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
+        isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
     }
 
     public String showFoodsICanEat() {
@@ -49,11 +50,13 @@ public abstract class Animal {
     }
 
     public boolean endOfTurn(){
-        age++;
+        if(age++ > MAX_AGE) isDead = true;
         howMuchFoodIAteToday = 0;
         if (loseHp) loseHealth();
+        if(health <= 0) isDead = true;
         loseHp = true;
-        return isSick();
+        isSick();
+        return isDead;
     }
 
     public String getName(){ return name; }

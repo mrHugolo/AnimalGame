@@ -21,12 +21,10 @@ public class Game {
                     continue;
                 }
                 readOutVeterinarianBills(player);
-                chooseWhatToDo(player, "");
+                chooseWhatToDo(player);
             }
             for (Player player : Player.players) {
-                for (Animal animal : player.animals) {
-                    if(animal.endOfTurn()) player.getVeterinarianBill(animal);
-                }
+                player.animals.removeIf(Animal::endOfTurn);
             }
             round++;
         }
@@ -49,25 +47,28 @@ public class Game {
     }
 
     public void readOutVeterinarianBills(Player player) {
-        int bills = player.veterinarianBill.size();
-        if (bills == 0) return;
 
         Dialogs.cleanSlate(30);
-        System.out.println(player.name + ": You have " + bills + " sick animal" + (bills == 1 ? "." : "s."));
-        for (Animal animal : player.veterinarianBill) {
-            Dialogs.cleanSlate(30);
-            System.out.println(Dialogs.animalName(animal));
+        int counter = 0;
+        System.out.println(player.name + ": These animals are sick!");
+        for (Animal animal : player.animals) {
+            if(animal.isSick)System.out.println(++counter + ". " + Dialogs.animalName(animal));
         }
-            Dialogs.continuePlaying();
-        for(Animal animal : player.animals) {
-            System.out.println(animal.name + " is sick. If you don't pay " + animal.veterinarianCost + " coins, " +
-                    (animal.gender == 0 ? "he" : "she") + " will die! Even if you do pay, there is still " +
-                    animal.chanceOfDeath + " % chance that " + (animal.gender == 0 ? "he" : "she") + " will die!" +
-                    "\nYou have " + player.money + " coins.");
-
-            if (Dialogs.promptString("Would you like to pay the bill? (y/n)", "y")) player.payBill(animal);
-            else player.kill(animal);
-            Dialogs.continuePlaying();
+        if(counter == 0) return;
+        Dialogs.continuePlaying();
+        for(int i = player.animals.size() - 1; i >= 0; i--) {
+            Dialogs.cleanSlate(30);
+            if(player.animals.get(i).isSick) {
+                if (Dialogs.promptString(Dialogs.animalName(player.animals.get(i)) +
+                        " is sick. If you don't pay " + player.animals.get(i).veterinarianCost + " coins, " +
+                        (player.animals.get(i).gender == 0 ? "he" : "she") + " will die! Even if you do pay, " +
+                        "there is still " + player.animals.get(i).chanceOfDeath + " % chance that " +
+                        (player.animals.get(i).gender == 0 ? "he" : "she") + " will die!" +
+                        "\nYou have " + player.money + " coins. Would you like to pay the bill? (y/n)", "y"))
+                    player.payBill(player.animals.get(i));
+                else player.kill(player.animals.get(i));
+                Dialogs.continuePlaying();
+            }
         }
 
     }
