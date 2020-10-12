@@ -70,8 +70,10 @@ public class Player {
         int males = 0;
         int females = 0;
         for (int i = 0; i < animal1.numberOfPossibleBabies; i ++) {
-            int tryToMakeABaby = !animal1.getClass().getSimpleName().equals(animal2.getClass().getSimpleName())
-                    ? 0 : animal1.gender == animal2.gender ? 0 : (int) (Math.random() * 2);
+            int tryToMakeABaby = (animal1.age < 4 || animal2.age < 4) ?
+                    0 : !animal1.getClass().getSimpleName().equals(animal2.getClass().getSimpleName()) ?
+                    0 : animal1.gender == animal2.gender ?
+                    0 : (int) (Math.random() * 2);
             if (tryToMakeABaby == 1) {
                 int genderReveal = (int) (Math.random() * 2);
                 males = genderReveal == 0 ? males + 1 : males;
@@ -88,14 +90,14 @@ public class Player {
                 "You got ", males + females, " out of ", animal1.numberOfPossibleBabies, " possible babies, ",
                 males, " male and ", females, " female. What would you like to name them?");
         System.out.println(" Enter " + (males + females) + " name" +
-                (males + females == 1 ? "" : "s differentiated by a space"));
+                (males + females == 1 ? "" : "s differentiated by an underscore (_)"));
 
         Scanner stringScan = new Scanner(System.in);
         String names = stringScan.nextLine();
-        String[] nameList = names.split(" ");
+        String[] nameList = names.split("_");
 
         for(int i = 0; i < nameList.length; i++){
-            if(Dialogs.charCounter(nameList[i], 0) > 20 || Dialogs.charCounter(nameList[i], 0) == 0){
+            if(Dialogs.charCounter(nameList[i]) > 20 || Dialogs.charCounter(nameList[i]) < 2){
                 nameList[i] = (AnimalNames.animalNames[(int) (Math.random() * 4)]);
             System.out.println(name);
             }
@@ -147,6 +149,19 @@ public class Player {
 
     public void increaseMoney(int addedMoney){
         this.money += addedMoney;
+    }
+
+    public String[] otherPlayerNames(){
+        String[] nameList = new String[players.size() - 1];
+        int i = 0;
+        int j = 0;
+        while(nameList[nameList.length - 1] == null) {
+            if (j == players.indexOf(this)) j++;
+            nameList[i++] = players.get(j++).name;
+        }
+
+
+        return nameList;
     }
 
 }

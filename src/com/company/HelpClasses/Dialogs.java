@@ -12,9 +12,10 @@ public class Dialogs {
     public static String menuWithLetters(String title, String ... options){
         System.out.println(title);
         for(int i = 0; i < options.length; i += 2){
-            System.out.println(options[i] + " ".repeat(40 - charCounter(options[i], 0)) + options[i + 1]);
+            System.out.println(options[i] + " ".repeat(40 - charCounter(options[i])) + options[i + 1]);
         }
-        String choice = scan.next();
+        String choice = scan.nextLine();
+        if(options.length == 0) return choice;
         for(String option : options){
             if(choice.equals(option.split("")[0])) return choice;
         }
@@ -35,7 +36,7 @@ public class Dialogs {
     }
 
     public static void continuePlaying(){
-        System.out.println("Press c followed by ENTER to continue!");
+        System.out.println("\nPress c followed by ENTER to continue!");
         scan.next();
     }
 
@@ -47,12 +48,12 @@ public class Dialogs {
 
     public static int promptInt(String question, int min, int max){
         System.out.println(question + " (" + min + "-" + max + ")");
-        int choice = min;
-        try{choice = scan.nextInt();}
+        int choice = min - 1;
+        String temp = scan.next();
+        try{choice = Integer.parseInt(temp);}
         catch (Exception ignore){}
-        choice = Math.max(min, choice);
-        choice = Math.min(max, choice);
-        return choice;
+
+        return choice < min || choice > max ? promptInt(question, min, max) : choice;
     }
 
     public static String animalName(Animal animal){
@@ -63,11 +64,8 @@ public class Dialogs {
         System.out.println("\n".repeat(invisibleAt27));
     }
 
-    public static int charCounter(String word, int number) {
-        if (!word.equals("")) {
-            return word.split("").length;
-        }
-        return String.valueOf(number).split("").length;
+    public static int charCounter(String word) {
+        return word.split("").length;
     }
     //loseATurn is a red warning text
     public final static String loseATurn = "\u001B[31m\n" +
@@ -82,6 +80,8 @@ public class Dialogs {
                 "for these animals. Remember that you have to spend money to gain money!\n" +
                 "Every player has a choice each round to either buy animals, buy food, feed your existing animals, " +
                 "sell your animals or politely ask your existing animals to make more animals.\n" +
+                "Although animals obviously need to be of age to have babies of their own and the age of consent " +
+                "in the animal kingdom is four rounds old.\n" +
                 "All animals start with 100 hp and can't get more than that " +
                 "but if you don't feed your animals for a round they will lose 10-30 hp.\n" +
                 "If you choose to feed your animals they will gain 10 hp for every kg of food, " +

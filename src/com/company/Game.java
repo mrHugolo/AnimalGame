@@ -87,7 +87,7 @@ public class Game {
         String choice;
         if (number.length == 0) {
             choice = Dialogs.menuWithLetters(player.name +
-                            ": You have " + player.money +" coins. " +
+                            ": You have " + player.money + " coins. " +
                             "Enter the number/letter next to the action you want to do!\n",
 
                     "1. Buy Animals", "a. Show Animal List",
@@ -99,22 +99,14 @@ public class Game {
         else choice = number[0];
 
         switch (choice) {
-            case "1" -> {
-                if (buyAnimal(player).equals("y"))
-                    chooseWhatToDo(player, "1");
-            }
+            case "1" ->  buyAnimal(player);
             case "2" -> buyFood(player);
-
             case "3" -> feedAnimal(player);
-
-            case "4" -> {
-                if (sellAnimal(player).equals("y"))
-                    chooseWhatToDo(player, "4");
-            }
+            case "4" -> sellAnimal(player);
             case "5" -> mate(player);
-
             case "a" -> {
-                seeAnimalList(player, "");
+                seeAnimalList(player);
+                Dialogs.continuePlaying();
                 chooseWhatToDo(player);
             }
             case "f" -> {
@@ -126,99 +118,52 @@ public class Game {
                 chooseWhatToDo(player);
             }
             case "s" -> {}
-
             default -> chooseWhatToDo(player );
         }
     }
 
-    public String buyAnimal(Player player) {
+    public void buyAnimal(Player player){
         Dialogs.cleanSlate(30);
-        System.out.println(player.name + ": From where would you like to buy your animal?" + Dialogs.loseATurn +
-                "\n1. The Store\n2. Other Players");
-        String choice = scan.next();
-        if (choice.equals("1")) {
-            if (!buyAnimalFromStore(player).equals("I bought an animal.")) return "";
+        if(Dialogs.menu(player.name + ": From where would you like to buy your animal?",
+                "The Mall", "Other Players") == 1){
+            String[] animals = new String[Store.animalList.length];
+            int i = 0;
+            for(Animal animal : Store.animalList) animals[i++] = animal.name + " " + animal.calculatePrice() + " coins.";
             Dialogs.cleanSlate(30);
-        } else if (choice.equals("2")) {
-            String buyAnimalFromPlayer = buyAnimalFromPlayer(player);
-            if (buyAnimalFromPlayer.equals("Try again.")) {/*do nothing*/}
-            else if (!buyAnimalFromPlayer.equals("I bought an animal.")) return "";
-            else Dialogs.cleanSlate(30);
-
-        } else return "";
-
-        System.out.println(player.name + ": Would you like to buy more animals? (y/n)");
-        Scanner returnScan = new Scanner(System.in);
-        return returnScan.next();
-    }
-
-    public String buyAnimalFromStore(Player player) {
-        Dialogs.cleanSlate(30);
-        System.out.println("What animal would you like to buy?" + Dialogs.loseATurn + "\n");
-        int i = 1;
-        for (Animal animal : Store.animalList) {
-            System.out.println(i++ + ": " + animal.name + " " + animal.calculatePrice() + " coins.");
-        }
-        try {
-            Scanner animalScan = new Scanner(System.in);
-            int animal = animalScan.nextInt() - 1;
+            int animalChoice = Dialogs.menu("What animal would you like to buy?", animals) - 1;
             Dialogs.cleanSlate(30);
-            System.out.println("Which gender should your " + Store.animalList[animal].name.toLowerCase() +
-                    " be?" + Dialogs.loseATurn + "\n1. Male\n2. Female");
-            int gender = animalScan.nextInt() - 1;
+            int genderChoice = Dialogs.menu("Which gender should your " + Store.animalList[animalChoice].name +
+                    " be?", "Male", "Female") - 1;
             Dialogs.cleanSlate(30);
-            System.out.println("Please enter in a name for your " +
-                    (gender == 0 ? "male " : "female ") + Store.animalList[animal].name.toLowerCase() +
-                    " (1-20 characters or I will pick a name for you!)");
-            Scanner nameScan = new Scanner(System.in);
-            String name = nameScan.nextLine();
-            if (Dialogs.charCounter(name, 0) > 20 || Dialogs.charCounter(name, 0) == 0)
-                name = (AnimalNames.animalNames[(int) (Math.random() * 4)]);
-            player.buyAnimal(Objects.requireNonNull(Store.createAnimal(Store.animalList[animal].name, name, gender)));
-        } catch (Exception Return) {
-            return "";
+            String nameChoice = Dialogs.enterName("Please enter in a name for your " +
+                    (genderChoice == 0 ? "male " : "female ") + Store.animalList[animalChoice].name +
+                    " (2-20 characters or I will pick a name for you!)");
+            player.buyAnimal(Objects.requireNonNull(
+                    Store.createAnimal(Store.animalList[animalChoice].name, nameChoice, genderChoice)));
         }
-
-        return "I bought an animal.";
-    }
-
-    public String buyAnimalFromPlayer(Player player) {
-        Dialogs.cleanSlate(30);
-        System.out.println("\nWhich player do you want to buy from?" + Dialogs.loseATurn);
-
-        for (int i = 1; i < Player.players.size(); i++) {
-            System.out.println(i + ". " + (Player.players.indexOf(player) < i ? Player.players.get(i).name :
-                    Player.players.get(i - 1).name));
-        }
-        try {
-            Scanner animalScan = new Scanner(System.in);
-            int number = animalScan.nextInt();
-            number = Player.players.indexOf(player) < number ? number : number - 1;
-            if (seeAnimalList(Player.players.get(number), "hideContinueText") != 0) {
-                System.out.println("\nWhich animal would you like to buy?" + Dialogs.loseATurn);
-            } else return "Try again.";
-
-            int animal = animalScan.nextInt() - 1;
-            if (player.buyAnimal(Player.players.get(number).animals.get(animal), Player.players.get(number)) != -1) {
-                Dialogs.cleanSlate(30);
-                System.out.println(Player.players.get(number).name + ": Would you like to sell " +
-                        player.animals.get(player.animals.size() - 1).name +
-                        " for " + player.animals.get(player.animals.size() - 1).calculatePrice() + " coins? (y/n)");
-
-                Scanner yOrNScan = new Scanner(System.in);
-                String yOrN = yOrNScan.nextLine();
-                if (!yOrN.equals("y"))
-                    player.sellAnimal(player.animals.get(player.animals.size() - 1), Player.players.get(number));
-                return "I bought an animal.";
-            } else {
-                System.out.println("Sorry, you can't afford this animal. Would you like to buy another animal? (y/n)");
-                if (!scan.next().equals("n")) chooseWhatToDo(player, "1");
-                return "";
+        else{
+            Dialogs.cleanSlate(30);
+            int playerChoice = Dialogs.menu("Which player do you want to buy from?", player.otherPlayerNames());
+            playerChoice = Player.players.indexOf(player) < playerChoice ? playerChoice : playerChoice - 1;
+            Dialogs.cleanSlate(30);
+            int max = seeAnimalList(Player.players.get(playerChoice));
+            if(max == 0){
+                chooseWhatToDo(player, "1");
+                return;
             }
-        } catch (Exception Return) {
-            return "";
+            int animalChoice = Dialogs.promptInt("Which animal do you want to buy", 1, max) - 1;
+            Dialogs.cleanSlate(30);
+            if(Dialogs.promptString(Player.players.get(playerChoice).name + ": Do you want to sell " +
+                    Player.players.get(playerChoice).animals.get(animalChoice).name +
+                    " for " + Player.players.get(playerChoice).animals.get(animalChoice).calculatePrice() +
+                    " coins? (y/n)", "y"))
+                player.buyAnimal(
+                        Player.players.get(playerChoice).animals.get(animalChoice),
+                        Player.players.get(playerChoice));
         }
-
+        Dialogs.cleanSlate(30);
+        if(Dialogs.promptString(player.name + ": Do you want to buy more animals? (y/n)", "y"))
+            chooseWhatToDo(player, "1");
     }
 
     public void buyFood(Player player) {
@@ -240,11 +185,12 @@ public class Game {
 
     public void feedAnimal(Player player) {
         Dialogs.cleanSlate(30);
-        if(seeAnimalList(player, "hideContinueText") == 0){
+        if(seeAnimalList(player) == 0){
             chooseWhatToDo(player);
             return;
         }
-        int animalChoice = Dialogs.promptInt("\nWhich animal do you want to feed?", 1, player.animals.size()) - 1;
+        int animalChoice = Dialogs.promptInt(
+                "\nWhich animal do you want to feed?", 1, player.animals.size()) - 1;
         Dialogs.cleanSlate(30);
         String[] options = new String[Store.foodList.length];
         int i = 0;
@@ -252,7 +198,8 @@ public class Game {
         int foodChoice = Dialogs.menu("What food would you like to give to " +
                 player.animals.get(animalChoice).name + "?", options) - 1;
         Dialogs.cleanSlate(30);
-        int kgChoice = Dialogs.promptInt("How many kg of " + Store.foodList[foodChoice].getClass().getSimpleName() +
+        int kgChoice = Dialogs.promptInt(
+                "How many kg of " + Store.foodList[foodChoice].getClass().getSimpleName() +
                 " would you like to feed " + player.animals.get(animalChoice).name + "?\n" +
                 (player.animals.get(animalChoice).gender == 0 ? "He" : "She") +
                 " can eat " + (player.animals.get(animalChoice).howMuchFoodICanEat -
@@ -276,70 +223,50 @@ public class Game {
                     (player.animals.get(animalChoice).gender == 0 ? "he " : "she ") + "didn't gain any hp.");
         }
         player.animals.get(animalChoice).howMuchFoodIAteToday += kgChoice;
-        if(Dialogs.promptString("Would you like to feed more animals? (y/n)", "y")) chooseWhatToDo(player, "3");
+        if(Dialogs.promptString("Would you like to feed more animals? (y/n)", "y"))
+            chooseWhatToDo(player, "3");
     }
 
-    public String sellAnimal(Player player) {
+    public void sellAnimal(Player player) {
         Dialogs.cleanSlate(30);
-        System.out.println("Which animal do you want to sell?" + Dialogs.loseATurn + "\n");
-        if(seeAnimalList(player, "hideContinueText") == 0){
+        if(seeAnimalList(player) == 0){
             chooseWhatToDo(player);
-            return "";
+            return;
         }
-
-        try {
-            Scanner animalScan = new Scanner(System.in);
-            int animal = animalScan.nextInt() - 1;
-            Dialogs.cleanSlate(30);
-            System.out.println("Where would you like to sell " + player.animals.get(animal).name + "?" + Dialogs.loseATurn +
-                    "\n1. The Store\n2. Other Player");
-            String number = animalScan.next();
-            if (number.equals("1")) player.sellAnimal(player.animals.get(animal));
-            else if (number.equals("2")) {
-                Dialogs.cleanSlate(30);
-                System.out.println("Which player do you want to sell " + player.animals.get(animal).name + " to?");
-                for (int j = 1; j < Player.players.size(); j++) {
-                    System.out.println(j + ". " + (Player.players.indexOf(player) < j ? Player.players.get(j).name :
-                            Player.players.get(j - 1).name));
-                }
-                Scanner playerScan = new Scanner(System.in);
-                int choice = playerScan.nextInt();
-                choice = Player.players.indexOf(player) < choice ? choice : choice - 1;
-                Dialogs.cleanSlate(30);
-                System.out.println(Player.players.get(choice).name + ": Do you want to buy " +
-                        player.animals.get(animal).name + " the " +
-                        player.animals.get(animal).getClass().getSimpleName().toLowerCase() +
-                        " for " + player.animals.get(animal).calculatePrice() + " coins? (y/n)");
-                String yOrN = scan.next();
-                if (yOrN.equals("y")) player.sellAnimal(player.animals.get(animal), Player.players.get(choice));
-            } else return "";
-
-        } catch (Exception Return) {
-            return "";
+        int animalChoice = Dialogs.promptInt(
+                "Which animal do you want to sell?", 1, player.animals.size()) - 1;
+        Dialogs.cleanSlate(30);
+        String[] options = {"The Mall", "Other Players"};
+        if(Dialogs.menu(
+                "Where would you like to sell " + player.animals.get(animalChoice).name + "?", options) == 1)
+            player.sellAnimal(player.animals.get(animalChoice));
+        else {
+            int playerChoice = Dialogs.menu("Which player do you want to sell " +
+                            player.animals.get(animalChoice).name + " to?",
+                    player.otherPlayerNames());
+            playerChoice = Player.players.indexOf(player) < playerChoice ? playerChoice : playerChoice - 1;
+            if(Dialogs.promptString((Player.players.get(playerChoice).name + ": Do you want to buy " +
+                    Dialogs.animalName(player.animals.get(animalChoice)) +
+                    " for " + player.animals.get(animalChoice).calculatePrice() + " coins? (y/n)"), "y"))
+            player.sellAnimal(player.animals.get(animalChoice), Player.players.get(playerChoice));
         }
-        if (player.animals.size() == 0) return "";
-        System.out.println("Would you like to sell more animals? (y/n)");
-        return scan.next();
+        if(Dialogs.promptString("Would you like to sell more animals? (y/n)", "y"))
+            chooseWhatToDo(player, "4");
     }
 
     public void mate(Player player) {
         Dialogs.cleanSlate(30);
-        System.out.println("Pick two animals, separated by a space." +
-                " They will try to make a few babies." + Dialogs.loseATurn);
-        if(seeAnimalList(player, "hideContinueText") < 2) {
+        if(seeAnimalList(player) < 2) {
             chooseWhatToDo(player);
             return;
         }
-
+        String animals = Dialogs.menuWithLetters("Pick two animals, separated by an underscore (_)." +
+                " They will try to make a few babies.");
         try {
-            Scanner mateScan = new Scanner(System.in);
-            String[] twoNumbers = mateScan.nextLine().split(" ");
-            int animal1 = Integer.parseInt(twoNumbers[0]) - 1;
-            int animal2 = Integer.parseInt(twoNumbers[1]) - 1;
-
+            int animal1 = Integer.parseInt(animals.split("_")[0]) - 1;
+            int animal2 = Integer.parseInt(animals.split("_")[1]) - 1;
             player.mateTwoAnimals(player.animals.get(animal1), player.animals.get(animal2));
-        } catch (Exception ignore) {
-        }
+        } catch (Exception ignore){chooseWhatToDo(player, "5");}
     }
 
     public void showWhoWon(ArrayList<Player> players) {
@@ -364,7 +291,7 @@ public class Game {
                     "    : " + order.get(i).money + " coins");
     }
 
-    public int seeAnimalList(Player player, String hideContinueText) {
+    public int seeAnimalList(Player player) {
         Dialogs.cleanSlate(30);
         System.out.println(player.name + "'s AnimalList:\n");
         int i = 1;
@@ -376,18 +303,15 @@ public class Game {
             String price = "Price: " + animal.calculatePrice() + "/" + (int) animal.MAX_PRICE;
             String eats = "Eats: " + animal.showFoodsICanEat();
 
-            System.out.println(i++ + ". " + name + " ".repeat(40 - Dialogs.charCounter(name, 0)) +
-                    gender + " ".repeat(20 - Dialogs.charCounter(gender, 0)) +
-                    age + " ".repeat(15 - Dialogs.charCounter(age, 0)) +
-                    health + " ".repeat(15 - Dialogs.charCounter(health, 0)) +
-                    price + " ".repeat(20 - Dialogs.charCounter(price, 0)) +
-                    eats + " ".repeat(30 - Dialogs.charCounter(eats, 0)));
+            System.out.println(i++ + ". " +
+                    name + " ".repeat(40 - Dialogs.charCounter(name)) +
+                    gender + " ".repeat(20 - Dialogs.charCounter(gender)) +
+                    age + " ".repeat(15 - Dialogs.charCounter(age)) +
+                    health + " ".repeat(15 - Dialogs.charCounter(health)) +
+                    price + " ".repeat(20 - Dialogs.charCounter(price)) +
+                    eats);
         }
         if (player.animals.size() == 0) System.out.println("You don't have any animals!");
-        if (!hideContinueText.equals("hideContinueText")) {
-            System.out.println("\nPress c followed by ENTER to continue!");
-            scan.next();
-        }
         return player.animals.size();
     }
 
@@ -396,10 +320,9 @@ public class Game {
         System.out.println(player.name + "'s FoodList:\n");
         for (Food food : Store.foodList) {
             System.out.printf("%s %d%s  ", food.getClass().getSimpleName() + ":",
-                    player.foods.get(food.getClass().getSimpleName()), "kg");
+                    player.foods.get(food.getClass().getSimpleName()), "kg\n");
         }
-        System.out.println("\n\nPress c followed by ENTER to continue!");
-        scan.next();
+        Dialogs.continuePlaying();
     }
 
     public void seeInfo() {
@@ -412,13 +335,12 @@ public class Game {
                 "\n\nAnimals:        MaxAge:         MaxPrice:       Eats:");
         for (Animal animal : Store.animalList) {
             System.out.println(animal.getClass().getSimpleName() + " ".repeat(16 - Dialogs.charCounter(
-                    animal.getClass().getSimpleName(), 0)) +
-                    (int) animal.MAX_AGE + " ".repeat(16 - Dialogs.charCounter("", (int) animal.MAX_AGE)) +
-                    (int) animal.MAX_PRICE + " ".repeat(16 - Dialogs.charCounter("", (int) animal.MAX_PRICE)) +
+                    animal.getClass().getSimpleName())) +
+                    (int) animal.MAX_AGE + " ".repeat(16 - Dialogs.charCounter((int) animal.MAX_AGE + "")) +
+                    (int) animal.MAX_PRICE + " ".repeat(16 - Dialogs.charCounter((int) animal.MAX_PRICE + "")) +
                     animal.showFoodsICanEat());
         }
-        System.out.println("\nPress c followed by ENTER to continue!");
-        scan.next();
+        Dialogs.continuePlaying();
     }
 
 }
