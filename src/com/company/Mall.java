@@ -3,7 +3,7 @@ package com.company;
 import com.company.AnimalSubClasses.*;
 import com.company.FoodSubClasses.*;
 
-public class Store {
+public class Mall {
 
     protected static Food[] foodList = {
             new Fruit(),
@@ -22,7 +22,8 @@ public class Store {
             new Kangaroo("Kangaroo", 0)
             };
 
-    public Store(){
+
+    public Mall(){
     }
 
     public static Animal createAnimal(String animalClass, String name, int gender){

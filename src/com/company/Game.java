@@ -81,7 +81,6 @@ public class Game {
         }
     }
 
-    //Put number as "2" if you want case "2".
     public void chooseWhatToDo(Player player, String ... number) {
         Dialogs.cleanSlate(30);
         String choice;
@@ -126,20 +125,20 @@ public class Game {
         Dialogs.cleanSlate(30);
         if(Dialogs.menu(player.name + ": From where would you like to buy your animal?",
                 "The Mall", "Other Players") == 1){
-            String[] animals = new String[Store.animalList.length];
+            String[] animals = new String[Mall.animalList.length];
             int i = 0;
-            for(Animal animal : Store.animalList) animals[i++] = animal.name + " " + animal.calculatePrice() + " coins.";
+            for(Animal animal : Mall.animalList) animals[i++] = animal.name + " " + animal.calculatePrice() + " coins.";
             Dialogs.cleanSlate(30);
             int animalChoice = Dialogs.menu("What animal would you like to buy?", animals) - 1;
             Dialogs.cleanSlate(30);
-            int genderChoice = Dialogs.menu("Which gender should your " + Store.animalList[animalChoice].name +
+            int genderChoice = Dialogs.menu("Which gender should your " + Mall.animalList[animalChoice].name +
                     " be?", "Male", "Female") - 1;
             Dialogs.cleanSlate(30);
             String nameChoice = Dialogs.enterName("Please enter in a name for your " +
-                    (genderChoice == 0 ? "male " : "female ") + Store.animalList[animalChoice].name +
-                    " (2-20 characters or I will pick a name for you!)");
+                    (genderChoice == 0 ? "male " : "female ") + Mall.animalList[animalChoice].name +
+                    " (2-20 characters or I will pick a name for you!)", 1).get(0);
             player.buyAnimal(Objects.requireNonNull(
-                    Store.createAnimal(Store.animalList[animalChoice].name, nameChoice, genderChoice)));
+                    Mall.createAnimal(Mall.animalList[animalChoice].name, nameChoice, genderChoice)));
         }
         else{
             Dialogs.cleanSlate(30);
@@ -168,18 +167,18 @@ public class Game {
 
     public void buyFood(Player player) {
         Dialogs.cleanSlate(30);
-        String[] options = new String[Store.foodList.length];
-        for(int i = 0; i < Store.foodList.length; i++)
-            options[i] = Store.foodList[i].name + " " + Store.foodList[i].price + " coins/kg";
+        String[] options = new String[Mall.foodList.length];
+        for(int i = 0; i < Mall.foodList.length; i++)
+            options[i] = Mall.foodList[i].name + " " + Mall.foodList[i].price + " coins/kg";
         int food = Dialogs.menu("What kind of food would you like to buy?", options) - 1;
 
         Dialogs.cleanSlate(30);
-        int kg = Dialogs.promptInt("How many kg of " + Store.foodList[food].name +
-                " would you like to buy?", 0, (player.money / Store.foodList[food].price));
+        int kg = Dialogs.promptInt("How many kg of " + Mall.foodList[food].name +
+                " would you like to buy?", 0, (player.money / Mall.foodList[food].price));
         player.buyFood(food, kg);
         Dialogs.cleanSlate(30);
 
-        if(Dialogs.promptString("You bought " + kg + "kg of " + Store.foodList[food].name +
+        if(Dialogs.promptString("You bought " + kg + "kg of " + Mall.foodList[food].name +
                 ". Would you like to buy more food? (y/n)", "y")) chooseWhatToDo(player, "2");
     }
 
@@ -192,22 +191,22 @@ public class Game {
         int animalChoice = Dialogs.promptInt(
                 "\nWhich animal do you want to feed?", 1, player.animals.size()) - 1;
         Dialogs.cleanSlate(30);
-        String[] options = new String[Store.foodList.length];
+        String[] options = new String[Mall.foodList.length];
         int i = 0;
-        for(Food food : Store.foodList)options[i++] = food.name + " " + player.foods.get(food.name) + "kg";
+        for(Food food : Mall.foodList)options[i++] = food.name + " " + player.foods.get(food.name) + "kg";
         int foodChoice = Dialogs.menu("What food would you like to give to " +
                 player.animals.get(animalChoice).name + "?", options) - 1;
         Dialogs.cleanSlate(30);
         int kgChoice = Dialogs.promptInt(
-                "How many kg of " + Store.foodList[foodChoice].getClass().getSimpleName() +
+                "How many kg of " + Mall.foodList[foodChoice].getClass().getSimpleName() +
                 " would you like to feed " + player.animals.get(animalChoice).name + "?\n" +
                 (player.animals.get(animalChoice).gender == 0 ? "He" : "She") +
                 " can eat " + (player.animals.get(animalChoice).howMuchFoodICanEat -
                 player.animals.get(animalChoice).howMuchFoodIAteToday) + "kg. You have " +
-                player.foods.get(Store.foodList[foodChoice].getClass().getSimpleName()) + "kg", 0,
+                player.foods.get(Mall.foodList[foodChoice].getClass().getSimpleName()) + "kg", 0,
                 Math.min((player.animals.get(animalChoice).howMuchFoodICanEat -
                         player.animals.get(animalChoice).howMuchFoodIAteToday),
-                        player.foods.get(Store.foodList[foodChoice].getClass().getSimpleName())));
+                        player.foods.get(Mall.foodList[foodChoice].getClass().getSimpleName())));
         Dialogs.cleanSlate(30);
         if (player.animals.get(animalChoice).foodsICanEat.contains(foodChoice)) {
             player.feedAnimal(player.animals.get(animalChoice), foodChoice, kgChoice);
@@ -216,10 +215,10 @@ public class Game {
                     "kg and now has " +
                     player.animals.get(animalChoice).health + "hp.");
         } else {
-            String foodName = Store.foodList[foodChoice].getClass().getSimpleName();
+            String foodName = Mall.foodList[foodChoice].getClass().getSimpleName();
             player.foods.put(foodName, player.foods.get(foodName) - kgChoice);
             System.out.println("That was a waste of food... " + player.animals.get(animalChoice).name + " can't eat " +
-                    Store.foodList[foodChoice].getClass().getSimpleName() + " so " +
+                    Mall.foodList[foodChoice].getClass().getSimpleName() + " so " +
                     (player.animals.get(animalChoice).gender == 0 ? "he " : "she ") + "didn't gain any hp.");
         }
         player.animals.get(animalChoice).howMuchFoodIAteToday += kgChoice;
@@ -318,7 +317,7 @@ public class Game {
     public void seeFoodList(Player player) {
         Dialogs.cleanSlate(30);
         System.out.println(player.name + "'s FoodList:\n");
-        for (Food food : Store.foodList) {
+        for (Food food : Mall.foodList) {
             System.out.printf("%s %d%s  ", food.getClass().getSimpleName() + ":",
                     player.foods.get(food.getClass().getSimpleName()), "kg\n");
         }
@@ -333,7 +332,7 @@ public class Game {
         }
         System.out.println("Rounds played: " + round + "/" + rounds + "     Players left: " + players +
                 "\n\nAnimals:        MaxAge:         MaxPrice:       Eats:");
-        for (Animal animal : Store.animalList) {
+        for (Animal animal : Mall.animalList) {
             System.out.println(animal.getClass().getSimpleName() + " ".repeat(16 - Dialogs.charCounter(
                     animal.getClass().getSimpleName())) +
                     (int) animal.MAX_AGE + " ".repeat(16 - Dialogs.charCounter((int) animal.MAX_AGE + "")) +

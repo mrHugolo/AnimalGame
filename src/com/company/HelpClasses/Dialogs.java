@@ -56,6 +56,25 @@ public class Dialogs {
         return choice < min || choice > max ? promptInt(question, min, max) : choice;
     }
 
+    public static ArrayList<String> enterName(String message, int numberOfNames){
+        System.out.println(message);
+
+
+        Scanner nameScan = new Scanner(System.in);
+        ArrayList<String> names = new ArrayList<>(Arrays.asList(nameScan.nextLine().split("_")));
+        int rand = (int) (Math.random() * AnimalNames.animalNames.length);
+        for(int i = 0; i < numberOfNames; i++) {
+            try {
+                String name = charCounter(names.get(i)) < 2 || charCounter(names.get(i)) > 20 ?
+                        AnimalNames.animalNames[rand] : names.get(i);
+                names.set(i, name);
+            }
+            catch (Exception e){names.set(i, AnimalNames.animalNames[rand]);}
+        }
+        while(names.size() > numberOfNames) names.remove(names.size() - 1);
+        return names;
+    }
+
     public static String animalName(Animal animal){
         return animal.getName() + " the " + animal.getClass().getSimpleName().toLowerCase();
     }

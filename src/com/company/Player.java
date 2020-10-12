@@ -30,9 +30,9 @@ public class Player {
     }
 
     public void buyFood(int foodInFoodList, int kg){
-       String food = Store.foodList[foodInFoodList].getClass().getSimpleName();
+       String food = Mall.foodList[foodInFoodList].getClass().getSimpleName();
        foods.put(food, foods.get(food) + kg);
-       increaseMoney(Store.foodList[foodInFoodList].price * kg * -1);
+       increaseMoney(Mall.foodList[foodInFoodList].price * kg * -1);
     }
 
     //players will only be 0 or 1
@@ -59,9 +59,9 @@ public class Player {
     }
 
     public void feedAnimal(Animal animal, int foodInFoodList, int kg){
-        //kg = Math.min(kg, foods.get(Store.foodList[foodInFoodList].getClass().getSimpleName()));
+
         //increase as much money as Player lose in buyFood()
-        increaseMoney(Store.foodList[foodInFoodList].price * kg);
+        increaseMoney(Mall.foodList[foodInFoodList].price * kg);
         buyFood(foodInFoodList, kg * -1);
         animal.health = Math.min(100, animal.health + 10 * kg);
     }
@@ -107,16 +107,16 @@ public class Player {
         else if(nameList.length < males + females) System.out.println("You didn't write enough names, I'll add some!");
 
         for(int i = 0; i < males; i++){
-            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 0));}
+            try{animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 0));}
             catch (Exception e){
-                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
+                animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(),
                         AnimalNames.animalNames[(int) (Math.random() * 4)],0));
             }
         }
         for(int i = males; i < females + males; i++){
-            try{animals.add(Store.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 1));}
+            try{animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 1));}
             catch (Exception e){
-                animals.add(Store.createAnimal(animal1.getClass().getSimpleName(),
+                animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(),
                         AnimalNames.animalNames[(int) (Math.random() * 4)],1));
             }
         }

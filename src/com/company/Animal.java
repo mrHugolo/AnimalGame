@@ -44,7 +44,7 @@ public abstract class Animal {
     public String showFoodsICanEat() {
         StringBuilder list = new StringBuilder();
         for (int food : foodsICanEat) {
-            list.append(Store.foodList[food].getClass().getSimpleName()).append(" ");
+            list.append(Mall.foodList[food].getClass().getSimpleName()).append(" ");
         }
         return list.toString();
     }
