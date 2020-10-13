@@ -15,13 +15,13 @@ public class Game {
         Dialogs.rules();
         decideRoundsAndPlayers();
         while (round <= rounds || Player.players.size() == 0) {
-            for (Player player : Player.players) {
-                if(player.checkIfPlayerDied()) {
+            for (int i = 0; i < Player.players.size(); i++) {
+                readOutVeterinarianBills(Player.players.get(i));
+                chooseWhatToDo(Player.players.get(i));
+                if(Player.players.get(i).checkIfPlayerDied()) {
+                    i--;
                     Dialogs.continuePlaying();
-                    continue;
                 }
-                readOutVeterinarianBills(player);
-                chooseWhatToDo(player);
             }
             for (Player player : Player.players) {
                 player.animals.removeIf(Animal::endOfTurn);
@@ -123,7 +123,7 @@ public class Game {
 
     public void buyAnimal(Player player){
         Dialogs.cleanSlate(30);
-        int notEnoughMoney = -1;
+        int notEnoughMoney = 0;
         if(Dialogs.menu(player.name + ": From where would you like to buy your animal?",
                 "The Mall", "Other Players") == 1){
             String[] animals = new String[Mall.animalList.length];
@@ -141,7 +141,7 @@ public class Game {
             notEnoughMoney = player.buyAnimal(Objects.requireNonNull(
                     Mall.createAnimal(Mall.animalList[animalChoice].name, nameChoice, genderChoice)));
         }
-        else{
+        else if (Player.players.size() > 1){
             Dialogs.cleanSlate(30);
             int playerChoice = Dialogs.menu("Which player do you want to buy from?", player.otherPlayerNames());
             playerChoice = Player.players.indexOf(player) < playerChoice ? playerChoice : playerChoice - 1;
