@@ -1,12 +1,10 @@
 package com.company;
 
-import com.company.HelpClasses.AnimalNames;
 import com.company.HelpClasses.Dialogs;
 
 import java.util.*;
 
 public class Player {
-    Scanner scan = new Scanner(System.in);
 
     protected static ArrayList<Player> players = new ArrayList<>();
     protected String name;
@@ -20,13 +18,7 @@ public class Player {
         money = 50000;
         animals = new ArrayList<>();
         foods = new LinkedHashMap<>();
-        foods.put("Fruit", 0);
-        foods.put("Berries", 0);
-        foods.put("Nuts", 0);
-        foods.put("Fish", 0);
-        foods.put("Grass", 0);
-
-
+        for(Food food : Mall.foodList) foods.put(food.name, 0);
     }
 
     public void buyFood(int foodInFoodList, int kg){
@@ -35,31 +27,28 @@ public class Player {
        increaseMoney(Mall.foodList[foodInFoodList].price * kg * -1);
     }
 
-    //players will only be 0 or 1
     public int buyAnimal(Animal animal, Player ... players){
         if(animal.calculatePrice() > money) return -1;
         if(players.length != 0) {
             players[0].animals.remove(animal);
             players[0].increaseMoney(animal.calculatePrice());
         }
-        this.animals.add(animal);
+        animals.add(animal);
         increaseMoney(animal.calculatePrice() * -1);
         return 0;
     }
 
-    //players will only be 0 or 1
     public void sellAnimal(Animal animal, Player ... players){
         if(players.length != 0){
             players[0].buyAnimal(animal, this);
         }
         else {
             animals.remove(animal);
-            this.increaseMoney(animal.calculatePrice());
+            increaseMoney(animal.calculatePrice());
         }
     }
 
     public void feedAnimal(Animal animal, int foodInFoodList, int kg){
-
         //increase as much money as Player lose in buyFood()
         increaseMoney(Mall.foodList[foodInFoodList].price * kg);
         buyFood(foodInFoodList, kg * -1);
@@ -82,46 +71,20 @@ public class Player {
         }
         if(males + females == 0) {
             System.out.println("You didn't get any babies!");
-            System.out.println("Press c to continue!");
-            scan.next();
+            Dialogs.continuePlaying();
             return;
         }
-        System.out.printf("%s %d %s %d %s %d %s %d %s",
-                "You got ", males + females, " out of ", animal1.numberOfPossibleBabies, " possible babies, ",
-                males, " male and ", females, " female. What would you like to name them?");
-        System.out.println(" Enter " + (males + females) + " name" +
-                (males + females == 1 ? "" : "s differentiated by an underscore (_)"));
-
-        Scanner stringScan = new Scanner(System.in);
-        String names = stringScan.nextLine();
-        String[] nameList = names.split("_");
-
-        for(int i = 0; i < nameList.length; i++){
-            if(Dialogs.charCounter(nameList[i]) > 20 || Dialogs.charCounter(nameList[i]) < 2){
-                nameList[i] = (AnimalNames.animalNames[(int) (Math.random() * 4)]);
-            System.out.println(name);
-            }
-        }
-
-        if(nameList.length > males + females) System.out.println("You wrote too many names, I'll remove some of them!");
-        else if(nameList.length < males + females) System.out.println("You didn't write enough names, I'll add some!");
-
-        for(int i = 0; i < males; i++){
-            try{animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 0));}
-            catch (Exception e){
-                animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(),
-                        AnimalNames.animalNames[(int) (Math.random() * 4)],0));
-            }
-        }
-        for(int i = males; i < females + males; i++){
-            try{animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), nameList[i], 1));}
-            catch (Exception e){
-                animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(),
-                        AnimalNames.animalNames[(int) (Math.random() * 4)],1));
-            }
-        }
-        System.out.println("Press c to continue!");
-        scan.next();
+        ArrayList<String> names = Dialogs.enterName("You got " + (males + females) + " out of " +
+                animal1.numberOfPossibleBabies + " possible babies, " + males + " male and " + females +
+                " female. What would you like to name them?\nEnter " + (males + females) + " name" +
+                        (males + females == 1 ? "" : "s differentiated by an underscore (_)" +
+                                "\n(2-20 characters or I will pick a name for you!)"),
+                males + females);
+        for(int i = 0; i < males; i++)
+            animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), names.get(i), 0));
+        for(int i = males; i < females + males; i++)
+            animals.add(Mall.createAnimal(animal1.getClass().getSimpleName(), names.get(i), 1));
+        Dialogs.continuePlaying();
     }
 
     public boolean checkIfPlayerDied(){
@@ -134,7 +97,7 @@ public class Player {
     }
 
     public void payBill(Animal animal){
-        if(money < animal.veterinarianCost) animal.chanceOfDeath *= 2;
+        if(money < animal.veterinarianCost) animal.chanceOfDeath += 10;
         increaseMoney(Math.max(animal.veterinarianCost * -1, money * -1));
         if((int) (Math.random() * 100) + 1 <= animal.chanceOfDeath) kill(animal);
         else System.out.println(animal.name + " survived!");
@@ -159,8 +122,6 @@ public class Player {
             if (j == players.indexOf(this)) j++;
             nameList[i++] = players.get(j++).name;
         }
-
-
         return nameList;
     }
 

@@ -29,7 +29,6 @@ public abstract class Animal {
         health = 100;
         age = 0;
         howMuchFoodIAteToday = 0;
-
     }
 
     public void loseHealth() {
@@ -37,7 +36,7 @@ public abstract class Animal {
     }
 
     public void isSick() {
-        int chanceOfSickness = (int) ((70 / (health + 1)) * (5 + age * (30 / MAX_AGE)));
+        int chanceOfSickness = (int) ((70 / (health + 1)) * (10 + age * (30 / MAX_AGE)));
         isSick = (int) ((Math.random() * 100) + 1) <= chanceOfSickness;
     }
 
@@ -50,7 +49,7 @@ public abstract class Animal {
     }
 
     public boolean endOfTurn(){
-        if(age++ > MAX_AGE) isDead = true;
+        if(++age > MAX_AGE) isDead = true;
         howMuchFoodIAteToday = 0;
         if (loseHp) loseHealth();
         if(health <= 0) isDead = true;

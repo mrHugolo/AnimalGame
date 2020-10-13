@@ -8,7 +8,6 @@ public class Dialogs {
     private final static Scanner scan = new Scanner(System.in);
 
 
-
     public static String menuWithLetters(String title, String ... options){
         System.out.println(title);
         for(int i = 0; i < options.length; i += 2){
@@ -59,19 +58,23 @@ public class Dialogs {
     public static ArrayList<String> enterName(String message, int numberOfNames){
         System.out.println(message);
 
-
         Scanner nameScan = new Scanner(System.in);
         ArrayList<String> names = new ArrayList<>(Arrays.asList(nameScan.nextLine().split("_")));
-        int rand = (int) (Math.random() * AnimalNames.animalNames.length);
+        System.out.println(names.size());
         for(int i = 0; i < numberOfNames; i++) {
+            int rand = (int) (Math.random() * AnimalNames.animalNames.length);
             try {
                 String name = charCounter(names.get(i)) < 2 || charCounter(names.get(i)) > 20 ?
                         AnimalNames.animalNames[rand] : names.get(i);
                 names.set(i, name);
             }
-            catch (Exception e){names.set(i, AnimalNames.animalNames[rand]);}
+            catch (Exception e){
+                names.add(i, "");
+                names.set(i, AnimalNames.animalNames[rand]);
+            }
         }
         while(names.size() > numberOfNames) names.remove(names.size() - 1);
+        System.out.println(names.size());
         return names;
     }
 
@@ -86,10 +89,6 @@ public class Dialogs {
     public static int charCounter(String word) {
         return word.split("").length;
     }
-    //loseATurn is a red warning text
-    public final static String loseATurn = "\u001B[31m\n" +
-            "If you type a number/letter that doesn't correspond to any available option," +
-            " you will lose your turn.\n\u001B[0m";
 
     public static void rules(){
         System.out.println("\n\nWelcome to AniMall!\n" +

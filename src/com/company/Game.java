@@ -123,6 +123,7 @@ public class Game {
 
     public void buyAnimal(Player player){
         Dialogs.cleanSlate(30);
+        int notEnoughMoney = -1;
         if(Dialogs.menu(player.name + ": From where would you like to buy your animal?",
                 "The Mall", "Other Players") == 1){
             String[] animals = new String[Mall.animalList.length];
@@ -137,7 +138,7 @@ public class Game {
             String nameChoice = Dialogs.enterName("Please enter in a name for your " +
                     (genderChoice == 0 ? "male " : "female ") + Mall.animalList[animalChoice].name +
                     " (2-20 characters or I will pick a name for you!)", 1).get(0);
-            player.buyAnimal(Objects.requireNonNull(
+            notEnoughMoney = player.buyAnimal(Objects.requireNonNull(
                     Mall.createAnimal(Mall.animalList[animalChoice].name, nameChoice, genderChoice)));
         }
         else{
@@ -156,11 +157,12 @@ public class Game {
                     Player.players.get(playerChoice).animals.get(animalChoice).name +
                     " for " + Player.players.get(playerChoice).animals.get(animalChoice).calculatePrice() +
                     " coins? (y/n)", "y"))
-                player.buyAnimal(
+                notEnoughMoney = player.buyAnimal(
                         Player.players.get(playerChoice).animals.get(animalChoice),
                         Player.players.get(playerChoice));
         }
         Dialogs.cleanSlate(30);
+        if(notEnoughMoney == -1) System.out.println("You can't afford this animal.");
         if(Dialogs.promptString(player.name + ": Do you want to buy more animals? (y/n)", "y"))
             chooseWhatToDo(player, "1");
     }
@@ -265,7 +267,10 @@ public class Game {
             int animal1 = Integer.parseInt(animals.split("_")[0]) - 1;
             int animal2 = Integer.parseInt(animals.split("_")[1]) - 1;
             player.mateTwoAnimals(player.animals.get(animal1), player.animals.get(animal2));
-        } catch (Exception ignore){chooseWhatToDo(player, "5");}
+        }
+        catch(Exception e){chooseWhatToDo(player, "5");}
+
+
     }
 
     public void showWhoWon(ArrayList<Player> players) {
