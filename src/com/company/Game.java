@@ -75,8 +75,8 @@ public class Game {
 
     public void sellAllAnimals(){
         for (Player player : Player.players) {
-            for (Animal animal : player.animals) {
-                player.sellAnimal(animal);
+            while (player.animals.size() > 0) {
+                player.sellAnimal(player.animals.get(0));
             }
         }
     }
@@ -321,10 +321,10 @@ public class Game {
 
     public void seeFoodList(Player player) {
         Dialogs.cleanSlate(30);
-        System.out.println(player.name + "'s FoodList:\n");
+        System.out.println(player.name + "'s FoodList:");
         for (Food food : Mall.foodList) {
-            System.out.printf("%s %d%s  ", food.getClass().getSimpleName() + ":",
-                    player.foods.get(food.getClass().getSimpleName()), "kg\n");
+            System.out.printf("\n%s %d%s  ", food.getClass().getSimpleName() + ":",
+                    player.foods.get(food.getClass().getSimpleName()), "kg");
         }
         Dialogs.continuePlaying();
     }

@@ -60,7 +60,6 @@ public class Dialogs {
 
         Scanner nameScan = new Scanner(System.in);
         ArrayList<String> names = new ArrayList<>(Arrays.asList(nameScan.nextLine().split("_")));
-        System.out.println(names.size());
         for(int i = 0; i < numberOfNames; i++) {
             int rand = (int) (Math.random() * AnimalNames.animalNames.length);
             try {
@@ -74,7 +73,6 @@ public class Dialogs {
             }
         }
         while(names.size() > numberOfNames) names.remove(names.size() - 1);
-        System.out.println(names.size());
         return names;
     }
 
