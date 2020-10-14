@@ -151,7 +151,7 @@ public class Game {
                 chooseWhatToDo(player, "1");
                 return;
             }
-            int animalChoice = Dialogs.promptInt("Which animal do you want to buy", 1, max) - 1;
+            int animalChoice = Dialogs.promptInt("Which animal do you want to buy?", 1, max) - 1;
             Dialogs.cleanSlate(30);
             if(Dialogs.promptString(Player.players.get(playerChoice).name + ": Do you want to sell " +
                     Player.players.get(playerChoice).animals.get(animalChoice).name +
@@ -251,7 +251,8 @@ public class Game {
                     " for " + player.animals.get(animalChoice).calculatePrice() + " coins? (y/n)"), "y"))
             player.sellAnimal(player.animals.get(animalChoice), Player.players.get(playerChoice));
         }
-        if(Dialogs.promptString("Would you like to sell more animals? (y/n)", "y"))
+        if(Dialogs.promptString("Would you like to sell more animals? (y/n)", "y")
+                && player.animals.size() > 0)
             chooseWhatToDo(player, "4");
     }
 
